@@ -27,7 +27,7 @@ CHARACTER_LIMIT = 140
 
 
 class RenjianError(Exception):
-  '''Base class for Twitter errors'''
+  '''Base class for Renjian errors'''
   
   @property
   def message(self):
@@ -36,206 +36,240 @@ class RenjianError(Exception):
 
 
 class Status(object):
-  '''A class representing the Status structure used by the twitter API.
+  '''A class representing the Status structure used by the renjian API.
 
   The Status structure exposes the following properties:
-
-    status.created_at
-    status.created_at_in_seconds # read only
-    status.favorited
-    status.in_reply_to_screen_name
-    status.in_reply_to_user_id
-    status.in_reply_to_status_id
-    status.truncated
-    status.source
+  
     status.id
+    status.created_at
+    status.relative_date
     status.text
-    status.relative_created_at # read only
+    status.source
+    status.truncated
+    status.in_reply_to_status_id
+    status.in_reply_to_user_id
+    status.in_reply_to_screen_name
+    status.favorited
+    status.original_url
+    status.status_type
+    status.link_title
+    status.link_desc
+    status.level
+    status.root_screen_name
+    status.root_status_id
+    status.all_zt_num
+    status.stick
+    status.favoriters
     status.user
   '''
   def __init__(self,
-               created_at=None,
-               favorited=None,
                id=None,
+               created_at=None,
+               relative_date=None,
                text=None,
-               user=None,
-               in_reply_to_screen_name=None,
-               in_reply_to_user_id=None,
-               in_reply_to_status_id=None,
-               truncated=None,
                source=None,
-               now=None):
-    '''An object to hold a Twitter status message.
+               truncated=None,
+               in_reply_to_status_id=None,
+               in_reply_to_user_id=None,
+               in_reply_to_screen_name=None,
+               favorited=None,
+               original_url=None,
+               status_type=None,
+               link_title=None,
+               link_desc=None,
+               level=None,
+               root_screen_name=None,
+               root_status_id=None,
+               all_zt_num=None,
+               stick=None,
+               favoriters,
+               user=None):
+    '''An object to hold a Renjian status message.
 
-    This class is normally instantiated by the twitter.Api class and
+    This class is normally instantiated by the renjian.Api class and
     returned in a sequence.
 
-    Note: Dates are posted in the form "Sat Jan 27 04:17:38 +0000 2007"
+    Note: Dates are posted in the form "2009-08-15 02:21:36 +0800"
 
-    Args:
-      created_at: The time this status message was posted
-      favorited: Whether this is a favorite of the authenticated user
-      id: The unique id of this status message
-      text: The text of this status message
-      relative_created_at:
-        A human readable string representing the posting time
-      user:
-        A twitter.User instance representing the person posting the message
-      now:
-        The current time, if the client choses to set it.  Defaults to the
-        wall clock time.
     '''
-    self.created_at = created_at
-    self.favorited = favorited
-    self.id = id
-    self.text = text
-    self.user = user
-    self.now = now
-    self.in_reply_to_screen_name = in_reply_to_screen_name
-    self.in_reply_to_user_id = in_reply_to_user_id
-    self.in_reply_to_status_id = in_reply_to_status_id
-    self.truncated = truncated
-    self.source = source
+    self.id=id
+    self.created_at=created_at
+    self.relative_date=relative_date
+    self.text=text
+    self.source=source
+    self.truncated=truncated
+    self.in_reply_to_status_id=in_reply_to_status_id
+    self.in_reply_to_user_id=in_reply_to_user_id
+    self.in_reply_to_screen_name=in_reply_to_screen_name
+    self.favorited=favorited
+    self.original_url=original_url
+    self.status_type=status_type
+    self.link_title=link_title
+    self.link_desc=link_desc
+    self.level=level
+    self.root_screen_name=root_screen_name
+    self.root_status_id=root_status_id
+    self.all_zt_num=all_zt_num
+    self.stick=stick
+    self.favoriters=favoriters
+    self.user=user
+
+  def GetId(self):
+    return self._id
+  def SetId(self, id):
+    self._id = id
+  id = property(GetId, SetId,
+                doc='The unique id of this status message.')
 
   def GetCreatedAt(self):
-    '''Get the time this status message was posted.
-
-    Returns:
-      The time this status message was posted
-    '''
     return self._created_at
-
   def SetCreatedAt(self, created_at):
-    '''Set the time this status message was posted.
-
-    Args:
-      created_at: The time this status message was created
-    '''
     self._created_at = created_at
-
   created_at = property(GetCreatedAt, SetCreatedAt,
                         doc='The time this status message was posted.')
 
   def GetCreatedAtInSeconds(self):
-    '''Get the time this status message was posted, in seconds since the epoch.
-
-    Returns:
-      The time this status message was posted, in seconds since the epoch.
-    '''
     return calendar.timegm(rfc822.parsedate(self.created_at))
-
   created_at_in_seconds = property(GetCreatedAtInSeconds,
                                    doc="The time this status message was "
                                        "posted, in seconds since the epoch")
+  
+  def GetRelativeDate(self):
+    return self._relative_date
+  def SetRelativeDate(self, relative_date):
+      self._relative_date = relative_date
+  relative_date = property(GetRelativeDate, SetRelativeDate,
+                           doc="The relative date which calculated by server.")
 
-  def GetFavorited(self):
-    '''Get the favorited setting of this status message.
+  def GetText(self):
+    return self._text
+  def SetText(self, text):
+    self._text = text
+  text = property(GetText, SetText,
+                  doc='The text of this status message')
 
-    Returns:
-      True if this status message is favorited; False otherwise
-    '''
-    return self._favorited
-
-  def SetFavorited(self, favorited):
-    '''Set the favorited state of this status message.
-
-    Args:
-      favorited: boolean True/False favorited state of this status message
-    '''
-    self._favorited = favorited
-
-  favorited = property(GetFavorited, SetFavorited,
-                       doc='The favorited state of this status message.')
-
-  def GetId(self):
-    '''Get the unique id of this status message.
-
-    Returns:
-      The unique id of this status message
-    '''
-    return self._id
-
-  def SetId(self, id):
-    '''Set the unique id of this status message.
-
-    Args:
-      id: The unique id of this status message
-    '''
-    self._id = id
-
-  id = property(GetId, SetId,
-                doc='The unique id of this status message.')
-
-  def GetInReplyToScreenName(self):
-    return self._in_reply_to_screen_name
-
-  def SetInReplyToScreenName(self, in_reply_to_screen_name):
-    self._in_reply_to_screen_name = in_reply_to_screen_name
-
-  in_reply_to_screen_name = property(GetInReplyToScreenName, SetInReplyToScreenName,
-                doc='')
-
-  def GetInReplyToUserId(self):
-    return self._in_reply_to_user_id
-
-  def SetInReplyToUserId(self, in_reply_to_user_id):
-    self._in_reply_to_user_id = in_reply_to_user_id
-
-  in_reply_to_user_id = property(GetInReplyToUserId, SetInReplyToUserId,
-                doc='')
-
-  def GetInReplyToStatusId(self):
-    return self._in_reply_to_status_id
-
-  def SetInReplyToStatusId(self, in_reply_to_status_id):
-    self._in_reply_to_status_id = in_reply_to_status_id
-
-  in_reply_to_status_id = property(GetInReplyToStatusId, SetInReplyToStatusId,
+  def GetSource(self):
+    return self._source
+  def SetSource(self, source):
+    self._source = source
+  source = property(GetSource, SetSource,
                 doc='')
 
   def GetTruncated(self):
     return self._truncated
-
   def SetTruncated(self, truncated):
     self._truncated = truncated
-
   truncated = property(GetTruncated, SetTruncated,
                 doc='')
 
-  def GetSource(self):
-    return self._source
-
-  def SetSource(self, source):
-    self._source = source
-
-  source = property(GetSource, SetSource,
+  def GetInReplyToStatusId(self):
+    return self._in_reply_to_status_id
+  def SetInReplyToStatusId(self, in_reply_to_status_id):
+    self._in_reply_to_status_id = in_reply_to_status_id
+  in_reply_to_status_id = property(GetInReplyToStatusId, SetInReplyToStatusId,
                 doc='')
 
-  def GetText(self):
-    '''Get the text of this status message.
+  def GetInReplyToUserId(self):
+    return self._in_reply_to_user_id
+  def SetInReplyToUserId(self, in_reply_to_user_id):
+    self._in_reply_to_user_id = in_reply_to_user_id
+  in_reply_to_user_id = property(GetInReplyToUserId, SetInReplyToUserId,
+                doc='')
 
-    Returns:
-      The text of this status message.
-    '''
-    return self._text
+  def GetInReplyToScreenName(self):
+    return self._in_reply_to_screen_name
+  def SetInReplyToScreenName(self, in_reply_to_screen_name):
+    self._in_reply_to_screen_name = in_reply_to_screen_name
+  in_reply_to_screen_name = property(GetInReplyToScreenName, SetInReplyToScreenName,
+                doc='')
+  
+  def GetFavorited(self):
+    return self._favorited
+  def SetFavorited(self, favorited):
+    self._favorited = favorited
+  favorited = property(GetFavorited, SetFavorited,
+                       doc='The favorited state of this status message.')
+  
+  def GetOriginalUrl(self):
+      return self._original_url
+  def SetOriginalUrl(self, original_url):
+      self._original_url = original_url
+  original_url = property(GetOriginal_url, SetOriginalUrl,
+                          doc='')
+  
+  def GetStatusType(self):
+      return self._status_type
+  def SetOriginalUrl(self, status_type):
+      self._status_type = status_type
+  status_type = property(GetStatusType, SetOriginalUrl,
+                         doc='')
+  
+  def GetLinkTitle(self):
+      return self._link_title
+  def SetLinkTitle(self, link_title):
+      self._link_title = link_title
+  link_title = property(GetLinkTitle, SetLinkTitle,
+                        doc='')
+  
+  def GetLinkDesc(self):
+      return self._link_desc
+  def SetLinkDesc(self, link_desc):
+      self._link_desc = link_desc
+  link_desc = property(GetLinkDesc, SetLinkDesc,
+                       doc='')
+  
+  def GetLevel(self):
+      return self._level
+  def SetLevel(self, level):
+      self._level = level
+  level = property(GetLevel, SetLevel,
+                   doc='')
+  
+  def GetRootScreenName(self):
+      return self._root_screen_name
+  def SetRootScreenName(self, root_screen_name):
+      self._root_screen_name = root_screen_name
+  root_screen_name = property(GetRootScreenName, SetRootScreenName,
+                              doc='')
+  
+  def GetRootStatusId(self):
+      return self._root_status_id
+  def SetRootStatusId(self, root_status_id):
+      self._root_status_id = root_status_id
+  root_status_id = property(GetRootStatusId, SetRootStatusId,
+                            doc='')
+  
+  def GetAllZtNum(self):
+      return self._all_zt_num
+  def SetAllZtNum(self, all_zt_num):
+      self._all_zt_num = all_zt_num
+  all_zt_num = property(GetAllZtNum, SetAllZtNum,
+                        doc='')
+  
+  def GetStick(self):
+      return self._stick
+  def SetStick(self, stick):
+      self._stick = stick
+  stick = property(GetStick, SetStick,
+                   doc='')
+  
+  def GetFavoriters(self):
+      return self._favoriters
+  def SetFavoriters(self, favoriters):
+      self._favoriters = favoriters
+  favoriters = property(GetFavoriters, SetFavoriters,
+                        doc='')
 
-  def SetText(self, text):
-    '''Set the text of this status message.
+  def GetUser(self):
+    return self._user
+  def SetUser(self, user):
+    self._user = user
+  user = property(GetUser, SetUser,
+                  doc='A renjian.User reprenting the entity posting this '
+                      'status message')
 
-    Args:
-      text: The text of this status message
-    '''
-    self._text = text
-
-  text = property(GetText, SetText,
-                  doc='The text of this status message')
-
+  '''need modify
   def GetRelativeCreatedAt(self):
-    '''Get a human redable string representing the posting time
-
-    Returns:
-      A human readable string representing the posting time
-    '''
     fudge = 1.25
     delta  = long(self.now) - long(self.created_at_in_seconds)
 
@@ -259,55 +293,7 @@ class Status(object):
   relative_created_at = property(GetRelativeCreatedAt,
                                  doc='Get a human readable string representing'
                                      'the posting time')
-
-  def GetUser(self):
-    '''Get a twitter.User reprenting the entity posting this status message.
-
-    Returns:
-      A twitter.User reprenting the entity posting this status message
-    '''
-    return self._user
-
-  def SetUser(self, user):
-    '''Set a twitter.User reprenting the entity posting this status message.
-
-    Args:
-      user: A twitter.User reprenting the entity posting this status message
-    '''
-    self._user = user
-
-  user = property(GetUser, SetUser,
-                  doc='A twitter.User reprenting the entity posting this '
-                      'status message')
-
-  def GetNow(self):
-    '''Get the wallclock time for this status message.
-
-    Used to calculate relative_created_at.  Defaults to the time
-    the object was instantiated.
-
-    Returns:
-      Whatever the status instance believes the current time to be,
-      in seconds since the epoch.
-    '''
-    if self._now is None:
-      self._now = time.time()
-    return self._now
-
-  def SetNow(self, now):
-    '''Set the wallclock time for this status message.
-
-    Used to calculate relative_created_at.  Defaults to the time
-    the object was instantiated.
-
-    Args:
-      now: The wallclock time for this instance.
-    '''
-    self._now = now
-
-  now = property(GetNow, SetNow,
-                 doc='The wallclock time for this status instance.')
-
+  '''
 
   def __ne__(self, other):
     return not self.__eq__(other)
@@ -315,68 +301,99 @@ class Status(object):
   def __eq__(self, other):
     try:
       return other and \
-             self.created_at == other.created_at and \
              self.id == other.id and \
+             self.created_at == other.created_at and \
+             self.relative_date == other.relative_date and \
              self.text == other.text and \
-             self.user == other.user and \
-             self.in_reply_to_screen_name == other.in_reply_to_screen_name and \
-             self.in_reply_to_user_id == other.in_reply_to_user_id and \
-             self.in_reply_to_status_id == other.in_reply_to_status_id and \
+             self.source == other.source and \
              self.truncated == other.truncated and \
+             self.in_reply_to_status_id == other.in_reply_to_status_id and \
+             self.in_reply_to_user_id == other.in_reply_to_user_id and \
+             self.in_reply_to_screen_name == other.in_reply_to_screen_name and \
              self.favorited == other.favorited and \
-             self.source == other.source
+             self.original_url == other.original_url and \
+             self.status_type == other.status_type and \
+             self.link_title == other.link_title and \
+             self.link_desc == other.link_desc and \
+             self.level == other.level and \
+             self.root_screen_name == other.root_screen_name and \
+             self.root_status_id == other.root_status_id and \
+             self.all_zt_num == other.all_zt_num and \
+             self.stick == other.stick and \
+             self.favoriters == other.favoriters and \
+             self.user == other.user
     except AttributeError:
       return False
 
   def __str__(self):
-    '''A string representation of this twitter.Status instance.
+    '''A string representation of this renjian.Status instance.
 
     The return value is the same as the JSON string representation.
 
     Returns:
-      A string representation of this twitter.Status instance.
+      A string representation of this renjian.Status instance.
     '''
     return self.AsJsonString()
 
   def AsJsonString(self):
-    '''A JSON string representation of this twitter.Status instance.
+    '''A JSON string representation of this renjian.Status instance.
 
     Returns:
-      A JSON string representation of this twitter.Status instance
+      A JSON string representation of this renjian.Status instance
    '''
     return simplejson.dumps(self.AsDict(), sort_keys=True)
 
   def AsDict(self):
-    '''A dict representation of this twitter.Status instance.
+    '''A dict representation of this renjian.Status instance.
 
     The return value uses the same key names as the JSON representation.
 
     Return:
-      A dict representing this twitter.Status instance
+      A dict representing this renjian.Status instance
     '''
     data = {}
-    if self.created_at:
-      data['created_at'] = self.created_at
-    if self.favorited:
-      data['favorited'] = self.favorited
     if self.id:
       data['id'] = self.id
+    if self.created_at:
+      data['created_at'] = self.created_at
+    if self.relative_date:
+      data['relative_date'] = self.relative_date
     if self.text:
       data['text'] = self.text
-    if self.user:
-      data['user'] = self.user.AsDict()
-    if self.in_reply_to_screen_name:
-      data['in_reply_to_screen_name'] = self.in_reply_to_screen_name
-    if self.in_reply_to_user_id:
-      data['in_reply_to_user_id'] = self.in_reply_to_user_id
-    if self.in_reply_to_status_id:
-      data['in_reply_to_status_id'] = self.in_reply_to_status_id
-    if self.truncated is not None:
-      data['truncated'] = self.truncated
-    if self.favorited is not None:
-      data['favorited'] = self.favorited
     if self.source:
       data['source'] = self.source
+    if self.truncated is not None:
+      data['truncated'] = self.truncated
+    if self.in_reply_to_status_id:
+      data['in_reply_to_status_id'] = self.in_reply_to_status_id
+    if self.in_reply_to_user_id:
+      data['in_reply_to_user_id'] = self.in_reply_to_user_id
+    if self.in_reply_to_screen_name:
+      data['in_reply_to_screen_name'] = self.in_reply_to_screen_name
+    if self.favorited is not None:
+      data['favorited'] = self.favorited
+    if self.original_url:
+      data['original_url'] = self.original_url
+    if self.status_type:
+      data['status_type'] = self.status_type
+    if self.link_title:
+      data['link_title'] = self.link_title
+    if self.link_desc:
+      data['link_desc'] = self.link_desc
+    if self.level:
+      data['level'] = self.level
+    if self.root_screen_name:
+      data['root_screen_name'] = self.root_screen_name
+    if self.root_status_id:
+      data['root_status_id'] = self.root_status_id
+    if self.all_zt_num:
+      data['all_zt_num'] = self.all_zt_num
+    if self.stick is not None:
+      data['stick'] = self.stick
+    if self.favoriters:
+      data['favoriters'] = self.favoriters
+    if self.user:
+      data['user'] = self.user.AsDict()
     return data
 
   @staticmethod
@@ -392,16 +409,28 @@ class Status(object):
       user = User.NewFromJsonDict(data['user'])
     else:
       user = None
-    return Status(created_at=data.get('created_at', None),
-                  favorited=data.get('favorited', None),
-                  id=data.get('id', None),
+    return Status(id=data.get('id', None),
+                  created_at=data.get('created_at', None),
+                  relative_date=data.get('relative_date', None),
                   text=data.get('text', None),
-                  in_reply_to_screen_name=data.get('in_reply_to_screen_name', None),
-                  in_reply_to_user_id=data.get('in_reply_to_user_id', None),
-                  in_reply_to_status_id=data.get('in_reply_to_status_id', None),
-                  truncated=data.get('truncated', None),
                   source=data.get('source', None),
+                  truncated=data.get('truncated', None),
+                  in_reply_to_status_id=data.get('in_reply_to_status_id', None),
+                  in_reply_to_user_id=data.get('in_reply_to_user_id', None),
+                  in_reply_to_screen_name=data.get('in_reply_to_screen_name', None),
+                  favorited=data.get('favorited', None),
+                  original_url=data.get('original_url', None),
+                  status_type=data.get('status_type', None),
+                  link_title=data.get('link_title', None),
+                  link_desc=data.get('link_desc', None),
+                  level=data.get('level', None),
+                  root_screen_name=data.get('root_screen_name', None),
+                  root_status_id=data.get('root_status_id', None),
+                  all_zt_num=data.get('all_zt_num', None),
+                  stick=data.get('stick', None),
+                  favoriters=data.get('favoriters', None),
                   user=user)
+
 
 
 class User(object):
