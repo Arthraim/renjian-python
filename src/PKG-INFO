@@ -1,0 +1,17 @@
+Metadata-Version: 1.0
+Name: renjian-python
+Version: 0.1
+Summary: A python wrapper around the Renjian API
+Home-page: 
+Author: Arthur Wang
+Author-email: arthraim@gmail.com
+Description:         
+        
+Keywords: renjian api
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: Communications :: Chat
+Classifier: Topic :: Internet
