@@ -401,9 +401,9 @@ class Status(object):
     '''Create a new instance based on a JSON dict.
 
     Args:
-      data: A JSON dict, as converted from the JSON in the twitter API
+      data: A JSON dict, as converted from the JSON in the renjian API
     Returns:
-      A twitter.Status instance
+      A renjian.Status instance
     '''
     if 'user' in data:
       user = User.NewFromJsonDict(data['user'])
