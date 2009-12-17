@@ -432,7 +432,6 @@ class Status(object):
                   user=user)
 
 
-
 class User(object):
   '''A class representing the User structure used by the twitter API.
 
@@ -702,8 +701,9 @@ class User(object):
                 score=data.get('score', None),
                 gender=data.get('gender', None))
 
+
 class DirectMessage(object):
-  '''A class representing the DirectMessage structure used by the twitter API.
+  '''A class representing the DirectMessage structure used by the renjian API.
 
   The DirectMessage structure exposes the following properties:
 
@@ -715,6 +715,8 @@ class DirectMessage(object):
     direct_message.recipient_id
     direct_message.recipient_screen_name
     direct_message.text
+    direct_message.sender
+    direct_message.recipient
   '''
 
   def __init__(self,
@@ -724,10 +726,12 @@ class DirectMessage(object):
                sender_screen_name=None,
                recipient_id=None,
                recipient_screen_name=None,
-               text=None):
-    '''An object to hold a Twitter direct message.
+               text=None,
+               sender=None,
+               recipient=None):
+    '''An object to hold a renjian direct message.
 
-    This class is normally instantiated by the twitter.Api class and
+    This class is normally instantiated by the renjian.Api class and
     returned in a sequence.
 
     Note: Dates are posted in the form "Sat Jan 27 04:17:38 +0000 2007"
@@ -735,10 +739,10 @@ class DirectMessage(object):
     Args:
       id: The unique id of this direct message
       created_at: The time this direct message was posted
-      sender_id: The id of the twitter user that sent this message
-      sender_screen_name: The name of the twitter user that sent this message
-      recipient_id: The id of the twitter that received this message
-      recipient_screen_name: The name of the twitter that received this message
+      sender_id: The id of the renjian user that sent this message
+      sender_screen_name: The name of the renjian user that sent this message
+      recipient_id: The id of the renjian that received this message
+      recipient_screen_name: The name of the renjian that received this message
       text: The text of this direct message
     '''
     self.id = id
@@ -748,150 +752,76 @@ class DirectMessage(object):
     self.recipient_id = recipient_id
     self.recipient_screen_name = recipient_screen_name
     self.text = text
+    self.sender = sender
+    self.recipient = recipient
 
   def GetId(self):
-    '''Get the unique id of this direct message.
-
-    Returns:
-      The unique id of this direct message
-    '''
     return self._id
-
   def SetId(self, id):
-    '''Set the unique id of this direct message.
-
-    Args:
-      id: The unique id of this direct message
-    '''
     self._id = id
-
   id = property(GetId, SetId,
                 doc='The unique id of this direct message.')
 
   def GetCreatedAt(self):
-    '''Get the time this direct message was posted.
-
-    Returns:
-      The time this direct message was posted
-    '''
     return self._created_at
-
   def SetCreatedAt(self, created_at):
-    '''Set the time this direct message was posted.
-
-    Args:
-      created_at: The time this direct message was created
-    '''
     self._created_at = created_at
-
   created_at = property(GetCreatedAt, SetCreatedAt,
                         doc='The time this direct message was posted.')
 
   def GetCreatedAtInSeconds(self):
-    '''Get the time this direct message was posted, in seconds since the epoch.
-
-    Returns:
-      The time this direct message was posted, in seconds since the epoch.
-    '''
     return calendar.timegm(rfc822.parsedate(self.created_at))
-
   created_at_in_seconds = property(GetCreatedAtInSeconds,
                                    doc="The time this direct message was "
                                        "posted, in seconds since the epoch")
 
   def GetSenderId(self):
-    '''Get the unique sender id of this direct message.
-
-    Returns:
-      The unique sender id of this direct message
-    '''
     return self._sender_id
-
   def SetSenderId(self, sender_id):
-    '''Set the unique sender id of this direct message.
-
-    Args:
-      sender id: The unique sender id of this direct message
-    '''
     self._sender_id = sender_id
-
   sender_id = property(GetSenderId, SetSenderId,
-                doc='The unique sender id of this direct message.')
+                       doc='The unique sender id of this direct message.')
 
   def GetSenderScreenName(self):
-    '''Get the unique sender screen name of this direct message.
-
-    Returns:
-      The unique sender screen name of this direct message
-    '''
     return self._sender_screen_name
-
   def SetSenderScreenName(self, sender_screen_name):
-    '''Set the unique sender screen name of this direct message.
-
-    Args:
-      sender_screen_name: The unique sender screen name of this direct message
-    '''
     self._sender_screen_name = sender_screen_name
-
   sender_screen_name = property(GetSenderScreenName, SetSenderScreenName,
-                doc='The unique sender screen name of this direct message.')
+                                doc='The unique sender screen name of this direct message.')
 
   def GetRecipientId(self):
-    '''Get the unique recipient id of this direct message.
-
-    Returns:
-      The unique recipient id of this direct message
-    '''
     return self._recipient_id
-
   def SetRecipientId(self, recipient_id):
-    '''Set the unique recipient id of this direct message.
-
-    Args:
-      recipient id: The unique recipient id of this direct message
-    '''
     self._recipient_id = recipient_id
-
   recipient_id = property(GetRecipientId, SetRecipientId,
-                doc='The unique recipient id of this direct message.')
+                          doc='The unique recipient id of this direct message.')
 
   def GetRecipientScreenName(self):
-    '''Get the unique recipient screen name of this direct message.
-
-    Returns:
-      The unique recipient screen name of this direct message
-    '''
     return self._recipient_screen_name
-
   def SetRecipientScreenName(self, recipient_screen_name):
-    '''Set the unique recipient screen name of this direct message.
-
-    Args:
-      recipient_screen_name: The unique recipient screen name of this direct message
-    '''
     self._recipient_screen_name = recipient_screen_name
-
   recipient_screen_name = property(GetRecipientScreenName, SetRecipientScreenName,
-                doc='The unique recipient screen name of this direct message.')
+                                   doc='The unique recipient screen name of this direct message.')
 
   def GetText(self):
-    '''Get the text of this direct message.
-
-    Returns:
-      The text of this direct message.
-    '''
     return self._text
-
   def SetText(self, text):
-    '''Set the text of this direct message.
-
-    Args:
-      text: The text of this direct message
-    '''
     self._text = text
-
   text = property(GetText, SetText,
+                  doc='The text of this direct message')
+  
+  def GetSender(self):
+    return self._sender
+  def SetSender(self, text):
+    self._sender = sender
+  sender = property(GetSender, SetSender,
+                    doc='The user object of sender.')
+  
+  def GetRecipient(self):
+    return self._recipient
+  def SetRecipient(self, text):
+    self._recipient = recipient
+  recipient = property(GetRecipient, SetRecipient,
                   doc='The text of this direct message')
 
   def __ne__(self, other):
@@ -906,35 +836,37 @@ class DirectMessage(object):
           self.sender_screen_name == other.sender_screen_name and \
           self.recipient_id == other.recipient_id and \
           self.recipient_screen_name == other.recipient_screen_name and \
-          self.text == other.text
+          self.text == other.text and \
+          self.sender == other.sender and \
+          self.recipient == other.recipient
     except AttributeError:
       return False
 
   def __str__(self):
-    '''A string representation of this twitter.DirectMessage instance.
+    '''A string representation of this renjian.DirectMessage instance.
 
     The return value is the same as the JSON string representation.
 
     Returns:
-      A string representation of this twitter.DirectMessage instance.
+      A string representation of this renjian.DirectMessage instance.
     '''
     return self.AsJsonString()
 
   def AsJsonString(self):
-    '''A JSON string representation of this twitter.DirectMessage instance.
+    '''A JSON string representation of this renjian.DirectMessage instance.
 
     Returns:
-      A JSON string representation of this twitter.DirectMessage instance
+      A JSON string representation of this renjian.DirectMessage instance
    '''
     return simplejson.dumps(self.AsDict(), sort_keys=True)
 
   def AsDict(self):
-    '''A dict representation of this twitter.DirectMessage instance.
+    '''A dict representation of this renjian.DirectMessage instance.
 
     The return value uses the same key names as the JSON representation.
 
     Return:
-      A dict representing this twitter.DirectMessage instance
+      A dict representing this renjian.DirectMessage instance
     '''
     data = {}
     if self.id:
@@ -951,6 +883,10 @@ class DirectMessage(object):
       data['recipient_screen_name'] = self.recipient_screen_name
     if self.text:
       data['text'] = self.text
+    if self.sender:
+      data['sender'] = self.sender.AsDict();
+    if self.recipient:
+      data['recipient'] = self.recipient.AsDict();
     return data
 
   @staticmethod
@@ -958,17 +894,28 @@ class DirectMessage(object):
     '''Create a new instance based on a JSON dict.
 
     Args:
-      data: A JSON dict, as converted from the JSON in the twitter API
+      data: A JSON dict, as converted from the JSON in the renjian API
     Returns:
-      A twitter.DirectMessage instance
+      A renjian.DirectMessage instance
     '''
+    if 'sender' in data:
+      sender = User.NewFromJsonDict(data['sender'])
+    else:
+      sender = None
+    if 'recipient' in data:
+      recipient = User.NewFromJsonDict(data['recipient'])
+    else:
+      recipient = None
     return DirectMessage(created_at=data.get('created_at', None),
                          recipient_id=data.get('recipient_id', None),
                          sender_id=data.get('sender_id', None),
                          text=data.get('text', None),
                          sender_screen_name=data.get('sender_screen_name', None),
                          id=data.get('id', None),
-                         recipient_screen_name=data.get('recipient_screen_name', None))
+                         recipient_screen_name=data.get('recipient_screen_name', None),
+                         sender=sender,
+                         recipient=recipient)
+
 
 class Api(object):
   '''A python interface into the Twitter API
@@ -1795,6 +1742,7 @@ class Api(object):
 
 class _FileCacheError(Exception):
   '''Base exception class for FileCache related errors'''
+
 
 class _FileCache(object):
 
