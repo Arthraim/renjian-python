@@ -917,6 +917,149 @@ class DirectMessage(object):
                          recipient=recipient)
 
 
+class Conversation(object):
+  '''A class representing the Conversation structure used by the renjian API.
+
+  The Conversation structure exposes the following properties:
+
+    conversation.id
+    conversation.last_status_id
+    conversation.text
+    conversation.unread_count
+    conversation.owner
+  '''
+  def __init__(self,
+               id=None,
+               last_status_id=None,
+               text=None,
+               unread_count=None,
+               owner=None):
+    '''An object to hold a renjian conversation.
+
+    This class is normally instantiated by the renjian.Api class and
+    returned in a sequence.
+
+    Args:
+      id: The unique id of conversation
+      last_status_id: The last status id of the conversation
+      text: Description of conversation(first status's text)
+      unread_count: Unread count of statuses in Conversation 
+      owner: A User object represent the ownder of the Conversation
+    '''
+    self.id = id
+    self.last_status_id = last_status_id
+    self.text = text
+    self.unread_count = unread_count
+    self.owner = owner
+
+  def GetId(self):
+    return self._id
+  def SetId(self, id):
+    self._id = id
+  id = property(GetId, SetId,
+                doc='The unique id of this conversation.')
+
+  def GetLastStatusId(self):
+    return self._last_status_id
+  def SetLastStatusId(self, created_at):
+    self._last_status_id = last_status_id
+  last_status_id = property(GetLastStatusId, SetLastStatusId,
+                            doc='The last status id of the conversation.')
+
+  def GetText(self):
+    return self._text
+  def SetText(self, text):
+    self._text = text
+  text = property(GetText, SetText,
+                  doc='Description of conversation(first Status.text)')
+  
+  def GetUnreadCount(self):
+    return self._unread_count
+  def SetUnreadCount(self, text):
+    self._unread_count = unread_count
+  unread_count = property(GetUnreadCount, SetUnreadCount,
+                    doc='Unread count of statuses in Conversation.')
+  
+  def GetOwner(self):
+    return self._owner
+  def SetOwner(self, owner):
+    self._owner = owner
+  owner = property(GetOwner, SetOwner,
+                       doc='A User object represent the ownder of the Conversation')
+
+  def __ne__(self, other):
+    return not self.__eq__(other)
+
+  def __eq__(self, other):
+    try:
+      return other and \
+          self.id == other.id and \
+          self.last_status_id == other.last_status_id and \
+          self.text == other.text and \
+          self.unread_count == other.unread_count and \
+          self.owner == other.owner
+    except AttributeError:
+      return False
+
+  def __str__(self):
+    '''A string representation of this renjian.Conversation instance.
+
+    The return value is the same as the JSON string representation.
+
+    Returns:
+      A string representation of this renjian.Conversation instance.
+    '''
+    return self.AsJsonString()
+
+  def AsJsonString(self):
+    '''A JSON string representation of this renjian.Conversation instance.
+
+    Returns:
+      A JSON string representation of this renjian.Conversation instance
+   '''
+    return simplejson.dumps(self.AsDict(), sort_keys=True)
+
+  def AsDict(self):
+    '''A dict representation of this renjian.Conversation instance.
+
+    The return value uses the same key names as the JSON representation.
+
+    Return:
+      A dict representing this renjian.Conversation instance
+    '''
+    data = {}
+    if self.id:
+      data['id'] = self.id
+    if self.last_status_id:
+      data['last_status_id'] = self.last_status_id
+    if self.text:
+      data['text'] = self.text
+    if self.unread_count:
+      data['unread_count'] = self.unread_count
+    if self.owner:
+      data['owner'] = self.owner.AsDict()
+    return data
+
+  @staticmethod
+  def NewFromJsonDict(data):
+    '''Create a new instance based on a JSON dict.
+
+    Args:
+      data: A JSON dict, as converted from the JSON in the renjian API
+    Returns:
+      A renjian.Conversation instance
+    '''
+    if 'owner' in data:
+      owner = User.NewFromJsonDict(data['owner'])
+    else:
+      owner = None
+    return Conversation(id=data.get('id', None),
+                        last_status_id=data.get('last_status_id', None),
+                        text=data.get('text', None),
+                        unread_count=data.get('unread_count', None),
+                        owner=owner)
+    
+
 class Api(object):
   '''A python interface into the Twitter API
 
