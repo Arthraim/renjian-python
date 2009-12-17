@@ -42,6 +42,7 @@ class Status(object):
   
     status.id
     status.created_at
+    status.created_at_in_seconds(Read Only)
     status.relative_date
     status.text
     status.source
@@ -126,7 +127,7 @@ class Status(object):
   def SetCreatedAt(self, created_at):
     self._created_at = created_at
   created_at = property(GetCreatedAt, SetCreatedAt,
-                        doc='The time this status message was posted.')
+                        doc='The time this status message was posted. ')
 
   def GetCreatedAtInSeconds(self):
     return calendar.timegm(rfc822.parsedate(self.created_at))
@@ -146,42 +147,42 @@ class Status(object):
   def SetText(self, text):
     self._text = text
   text = property(GetText, SetText,
-                  doc='The text of this status message')
+                  doc='The text of this status message.')
 
   def GetSource(self):
     return self._source
   def SetSource(self, source):
     self._source = source
   source = property(GetSource, SetSource,
-                    doc='')
+                    doc='The source which post this status message.')
 
   def GetTruncated(self):
     return self._truncated
   def SetTruncated(self, truncated):
     self._truncated = truncated
   truncated = property(GetTruncated, SetTruncated,
-                       doc='')
+                       doc='The flag represents if the status message is truncated into 140. ')
 
   def GetInReplyToStatusId(self):
     return self._in_reply_to_status_id
   def SetInReplyToStatusId(self, in_reply_to_status_id):
     self._in_reply_to_status_id = in_reply_to_status_id
   in_reply_to_status_id = property(GetInReplyToStatusId, SetInReplyToStatusId,
-                                   doc='')
+                                   doc='The id of a status which is replied by this status.')
 
   def GetInReplyToUserId(self):
     return self._in_reply_to_user_id
   def SetInReplyToUserId(self, in_reply_to_user_id):
     self._in_reply_to_user_id = in_reply_to_user_id
   in_reply_to_user_id = property(GetInReplyToUserId, SetInReplyToUserId,
-                                 doc='')
+                                 doc='The id of a user which is replied by this status.')
 
   def GetInReplyToScreenName(self):
     return self._in_reply_to_screen_name
   def SetInReplyToScreenName(self, in_reply_to_screen_name):
     self._in_reply_to_screen_name = in_reply_to_screen_name
   in_reply_to_screen_name = property(GetInReplyToScreenName, SetInReplyToScreenName,
-                                     doc='')
+                                     doc='The screen name of a user whick is replied by this status.')
   
   def GetFavorited(self):
     return self._favorited
@@ -195,70 +196,72 @@ class Status(object):
   def SetOriginalUrl(self, original_url):
       self._original_url = original_url
   original_url = property(GetOriginal_url, SetOriginalUrl,
-                          doc='')
+                          doc='The original url of the link or picture that this status contains.')
   
   def GetStatusType(self):
       return self._status_type
-  def SetOriginalUrl(self, status_type):
+  def SetStatusType(self, status_type):
       self._status_type = status_type
-  status_type = property(GetStatusType, SetOriginalUrl,
-                         doc='')
+  status_type = property(GetStatusType, SetStatusType,
+                         doc='The status type of this status.'
+                             'It is TEXT, PICTURE or LINK')
   
   def GetLinkTitle(self):
       return self._link_title
   def SetLinkTitle(self, link_title):
       self._link_title = link_title
   link_title = property(GetLinkTitle, SetLinkTitle,
-                        doc='')
+                        doc='The title of the link which this status contains.')
   
   def GetLinkDesc(self):
       return self._link_desc
   def SetLinkDesc(self, link_desc):
       self._link_desc = link_desc
   link_desc = property(GetLinkDesc, SetLinkDesc,
-                       doc='')
+                       doc='The description of the link which this status contains.')
   
   def GetLevel(self):
       return self._level
   def SetLevel(self, level):
       self._level = level
   level = property(GetLevel, SetLevel,
-                   doc='')
+                   doc='The level of this status.' 
+                       'It will be 1 if you post it first.')
   
   def GetRootScreenName(self):
       return self._root_screen_name
   def SetRootScreenName(self, root_screen_name):
       self._root_screen_name = root_screen_name
   root_screen_name = property(GetRootScreenName, SetRootScreenName,
-                              doc='')
+                              doc='The screen name of the root status of this status.')
   
   def GetRootStatusId(self):
       return self._root_status_id
   def SetRootStatusId(self, root_status_id):
       self._root_status_id = root_status_id
   root_status_id = property(GetRootStatusId, SetRootStatusId,
-                            doc='')
+                            doc='The if of the root status of this status.')
   
   def GetAllZtNum(self):
       return self._all_zt_num
   def SetAllZtNum(self, all_zt_num):
       self._all_zt_num = all_zt_num
   all_zt_num = property(GetAllZtNum, SetAllZtNum,
-                        doc='')
+                        doc='The number counting how many times this status was resent.')
   
   def GetStick(self):
       return self._stick
   def SetStick(self, stick):
       self._stick = stick
   stick = property(GetStick, SetStick,
-                   doc='')
+                   doc='The flag represents if this status is stuck')
   
   def GetFavoriters(self):
       return self._favoriters
   def SetFavoriters(self, favoriters):
       self._favoriters = favoriters
   favoriters = property(GetFavoriters, SetFavoriters,
-                        doc='')
+                        doc='The screen names users who set this status as their favorites.')
 
   def GetUser(self):
     return self._user
@@ -433,7 +436,7 @@ class Status(object):
 
 
 class User(object):
-  '''A class representing the User structure used by the twitter API.
+  '''A class representing the User structure used by the renjian API.
 
   The User structure exposes the following properties:
 
@@ -486,7 +489,6 @@ class User(object):
     self.score = score
     self.gender = gender
 
-
   def GetId(self):
     return self._id
   def SetId(self, id):
@@ -534,7 +536,7 @@ class User(object):
   def SetProtected(self, protected):
     self._protected = protected
   protected = property(GetProtected, SetProtected,
-                       doc='If this user is protected. (the property is no necessary)')
+                       doc='The flag represents if this user is protected.')
 
   def GetCreatedAt(self):
     return self._created_at
@@ -569,21 +571,21 @@ class User(object):
   def SetIsFollowedMe(self, is_followed_me):
     self._is_followed_me = is_followed_me
   is_followed_me = property(GetIsFollowedMe, SetIsFollowedMe,
-                            doc='If this user is following the authorized user.')
+                            doc='The flag represents if this user is following the authorized user.')
   
   def GetIsFollowing(self):
     return self._is_following
   def SetIsFollowing(self, is_following):
     self._is_following = is_following
   is_following = property(GetIsFollowing, SetIsFollowing,
-                 doc='If the authorized user is following this user.')
+                 doc='The flag represents if the authorized user is following this user.')
   
   def GetScore(self):
     return self._score
   def SetScore(self, is_following):
     self._score = score
   score = property(GetScore, SetScore,
-                   doc='The score who this user owned.')
+                   doc='The score who this user has.')
   
   def GetGender(self):
     return self._gender
@@ -815,14 +817,14 @@ class DirectMessage(object):
   def SetSender(self, text):
     self._sender = sender
   sender = property(GetSender, SetSender,
-                    doc='The user object of sender.')
+                    doc='The renjian.User object of sender.')
   
   def GetRecipient(self):
     return self._recipient
   def SetRecipient(self, text):
     self._recipient = recipient
   recipient = property(GetRecipient, SetRecipient,
-                  doc='The text of this direct message')
+                  doc='The renjian.User object of recipient.')
 
   def __ne__(self, other):
     return not self.__eq__(other)
