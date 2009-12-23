@@ -1063,7 +1063,7 @@ class Conversation(object):
     
 
 class Api(object):
-  '''A python interface into the Twitter API
+  '''A python interface into the Renjian API
 
   By default, the Api caches results for 1 minute.
 
@@ -1071,8 +1071,8 @@ class Api(object):
 
     To create an instance of the twitter.Api class, with no authentication:
 
-      >>> import twitter
-      >>> api = twitter.Api()
+      >>> import renjian
+      >>> api = renjian.Api()
 
     To fetch the most recently posted public twitter status messages:
 
@@ -1081,26 +1081,26 @@ class Api(object):
       [u'DeWitt', u'Kesuke Miyagi', u'ev', u'Buzz Andersen', u'Biz Stone'] #...
 
     To fetch a single user's public status messages, where "user" is either
-    a Twitter "short name" or their user id.
+    a Renjian "short name" or their user id.
 
       >>> statuses = api.GetUserTimeline(user)
       >>> print [s.text for s in statuses]
 
-    To use authentication, instantiate the twitter.Api class with a
+    To use authentication, instantiate the renjian.Api class with a
     username and password:
 
-      >>> api = twitter.Api(username='twitter user', password='twitter pass')
+      >>> api = renjian.Api(username='renjian user', password='renjian pass')
 
     To fetch your friends (after being authenticated):
 
       >>> users = api.GetFriends()
       >>> print [u.name for u in users]
 
-    To post a twitter status message (after being authenticated):
+    To post a renjian status message (after being authenticated):
 
-      >>> status = api.PostUpdate('I love python-twitter!')
+      >>> status = api.PostUpdate('I love renjian-python!')
       >>> print status.text
-      I love python-twitter!
+      I love renjian-python!
 
     There are many other methods, including:
 
@@ -1132,7 +1132,7 @@ class Api(object):
                password=None,
                input_encoding=None,
                request_headers=None):
-    '''Instantiate a new twitter.Api object.
+    '''Instantiate a new renjian.Api object.
 
     Args:
       username: The username of the twitter account.  [optional]
@@ -1149,162 +1149,242 @@ class Api(object):
     self._input_encoding = input_encoding
     self.SetCredentials(username, password)
 
-  def GetPublicTimeline(self, since_id=None):
-    '''Fetch the sequnce of public twitter.Status message for all users.
+  def GetPublicTimeline(self, 
+                        since_id=None,
+                        max_id=None,
+                        count=None,
+                        page=None):
+    '''Fetch the sequnce of public renjian.Status message for all users.
 
     Args:
       since_id:
         Returns only public statuses with an ID greater than (that is,
         more recent than) the specified ID. [Optional]
+      max_id:
+        Returns only public statuses with an ID smaller than (that is,
+        more recent than) the specified ID. [Optional]
+      count: 
+        Specifies the number of statuses to retrieve. May not be
+        greater than 200. [Optional]
+      page:
+        ....
 
     Returns:
-      An sequence of twitter.Status instances, one for each message
+      An sequence of renjian.Status instances, one for each message
     '''
     parameters = {}
     if since_id:
       parameters['since_id'] = since_id
-    url = 'http://twitter.com/statuses/public_timeline.json'
+    if count:
+      parameters['count'] = count
+    if page:
+      parameters['page'] = page
+    url = 'http://api.renjian.com/statuses/public_timeline.json'
     json = self._FetchUrl(url,  parameters=parameters)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return [Status.NewFromJsonDict(x) for x in data]
 
   def GetFriendsTimeline(self,
                          user=None,
+                         since_id=None,
+                         max_id=None,
                          count=None,
-                         since=None, 
-                         since_id=None):
-    '''Fetch the sequence of twitter.Status messages for a user's friends
+                         page=None):
+    '''Fetch the sequence of renjian.Status messages for a user's friends
 
-    The twitter.Api instance must be authenticated if the user is private.
+    The renjian.Api instance must be authenticated if the user is private.
 
     Args:
       user:
         Specifies the ID or screen name of the user for whom to return
         the friends_timeline.  If unspecified, the username and password
-        must be set in the twitter.Api instance.  [Optional]
+        must be set in the renjian.Api instance.  [Optional]
+      since_id:
+        Returns only public statuses with an ID greater than (that is,
+        more recent than) the specified ID. [Optional]
+      max_id:
+        Returns only public statuses with an ID smaller than (that is,
+        more recent than) the specified ID. [Optional]
       count: 
         Specifies the number of statuses to retrieve. May not be
         greater than 200. [Optional]
-      since:
-        Narrows the returned results to just those statuses created
-        after the specified HTTP-formatted date. [Optional]
-      since_id:
-        Returns only public statuses with an ID greater than (that is,
-        more recent than) the specified ID. [Optional]
+      page:
+        ....
 
     Returns:
-      A sequence of twitter.Status instances, one for each message
+      A sequence of renjian.Status instances, one for each message
     '''
     if user:
-      url = 'http://twitter.com/statuses/friends_timeline/%s.json' % user
+      url = 'http://api.renjian.com/statuses/friends_timeline/%s.json' % user
     elif not user and not self._username:
-      raise TwitterError("User must be specified if API is not authenticated.")
+      raise RenjianError("User must be specified if API is not authenticated.")
     else:
-      url = 'http://twitter.com/statuses/friends_timeline.json'
+      url = 'http://api.renjian.com/statuses/friends_timeline.json'
     parameters = {}
     if count is not None:
       try:
-        if int(count) > 200:
-          raise TwitterError("'count' may not be greater than 200")
+        if int(count) > 500:
+          raise RenjianError("'count' may not be greater than 500")
       except ValueError:
-        raise TwitterError("'count' must be an integer")
+        raise RenjianError("'count' must be an integer")
       parameters['count'] = count
-    if since:
-      parameters['since'] = since
+    if page:
+      parameters['page'] = page
     if since_id:
       parameters['since_id'] = since_id
+    if max_id:
+      parameters['max_id'] = max_id
     json = self._FetchUrl(url, parameters=parameters)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return [Status.NewFromJsonDict(x) for x in data]
 
-  def GetUserTimeline(self, user=None, count=None, since=None, since_id=None):
-    '''Fetch the sequence of public twitter.Status messages for a single user.
+  def GetUserTimeline(self, 
+                      user=None,
+                      since_id=None,
+                      max_id=None,
+                      count=None,
+                      page=None):
+    '''Fetch the sequence of public renjian.Status messages for a single user.
 
-    The twitter.Api instance must be authenticated if the user is private.
+    The renjian.Api instance must be authenticated if the user is private.
 
     Args:
       user:
-        either the username (short_name) or id of the user to retrieve.  If
-        not specified, then the current authenticated user is used. [optional]
-      count: the number of status messages to retrieve [optional]
-      since:
-        Narrows the returned results to just those statuses created
-        after the specified HTTP-formatted date. [optional]
+        Specifies the ID or screen name of the user for whom to return
+        the friends_timeline.  If unspecified, the username and password
+        must be set in the renjian.Api instance.  [Optional]
       since_id:
         Returns only public statuses with an ID greater than (that is,
         more recent than) the specified ID. [Optional]
-
+      max_id:
+        Returns only public statuses with an ID smaller than (that is,
+        more recent than) the specified ID. [Optional]
+      count: 
+        Specifies the number of statuses to retrieve. May not be
+        greater than 200. [Optional]
+      page:
+        ....
+        
     Returns:
-      A sequence of twitter.Status instances, one for each message up to count
+      A sequence of renjian.Status instances, one for each message up to count
     '''
-    try:
-      if count:
-        int(count)
-    except:
-      raise TwitterError("Count must be an integer")
+    if user:
+      url = 'http://api.renjian.com/statuses/user_timeline/%s.json' % user
+    elif not user and not self._username:
+      raise RenjianError("User must be specified if API is not authenticated.")
+    else:
+      url = 'http://api.renjian.com/statuses/user_timeline.json'
     parameters = {}
-    if count:
+    if count is not None:
+      try:
+        if int(count) > 500:
+          raise RenjianError("'count' may not be greater than 500")
+      except ValueError:
+        raise RenjianError("'count' must be an integer")
       parameters['count'] = count
-    if since:
-      parameters['since'] = since
+    if page:
+      parameters['page'] = page
     if since_id:
       parameters['since_id'] = since_id
-    if user:
-      url = 'http://twitter.com/statuses/user_timeline/%s.json' % user
-    elif not user and not self._username:
-      raise TwitterError("User must be specified if API is not authenticated.")
-    else:
-      url = 'http://twitter.com/statuses/user_timeline.json'
+    if max_id:
+      parameters['max_id'] = max_id
     json = self._FetchUrl(url, parameters=parameters)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return [Status.NewFromJsonDict(x) for x in data]
 
   def GetStatus(self, id):
     '''Returns a single status message.
 
-    The twitter.Api instance must be authenticated if the status message is private.
+    The renjian.Api instance must be authenticated if the status message is private.
 
     Args:
       id: The numerical ID of the status you're trying to retrieve.
 
     Returns:
-      A twitter.Status instance representing that status message
+      A renjian.Status instance representing that status message
     '''
     try:
       if id:
         long(id)
     except:
-      raise TwitterError("id must be an long integer")
-    url = 'http://twitter.com/statuses/show/%s.json' % id
+      raise RenjianError("id must be an long integer")
+    url = 'http://api.renjian.com/statuses/%s.json' % id
     json = self._FetchUrl(url)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
+
+  def GetMentions(self,
+                 since_id=None,
+                 max_id=None,
+                 count=None,
+                 page=None):
+    '''Get a sequence of status messages representing the 20 most recent
+    replies (status updates prefixed with @username) to the authenticating
+    user.
+
+    Args:
+      since_id:
+        Returns only public statuses with an ID greater than (that is,
+        more recent than) the specified ID. [Optional]
+      max_id:
+        Returns only public statuses with an ID smaller than (that is,
+        more recent than) the specified ID. [Optional]
+      count: 
+        Specifies the number of statuses to retrieve. May not be
+        greater than 200. [Optional]
+      page:
+        ....
+
+    Returns:
+      A sequence of twitter.Status instances, one for each reply to the user.
+    '''
+    url = 'http://api.renjian.com/statuses/mentions.json'
+    if not self._username:
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+    parameters = {}
+    if count is not None:
+      try:
+        if int(count) > 500:
+          raise RenjianError("'count' may not be greater than 500")
+      except ValueError:
+        raise RenjianError("'count' must be an integer")
+      parameters['count'] = count
+    if page:
+      parameters['page'] = page
+    if since_id:
+      parameters['since_id'] = since_id
+    if max_id:
+      parameters['max_id'] = max_id
+    json = self._FetchUrl(url, parameters=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return [Status.NewFromJsonDict(x) for x in data]
 
   def DestroyStatus(self, id):
     '''Destroys the status specified by the required ID parameter.
 
-    The twitter.Api instance must be authenticated and thee
+    The renjian.Api instance must be authenticated and thee
     authenticating user must be the author of the specified status.
 
     Args:
       id: The numerical ID of the status you're trying to destroy.
 
     Returns:
-      A twitter.Status instance representing the destroyed status message
+      A renjian.Status instance representing the destroyed status message
     '''
     try:
       if id:
         long(id)
     except:
-      raise TwitterError("id must be an integer")
-    url = 'http://twitter.com/statuses/destroy/%s.json' % id
+      raise RenjianError("id must be an integer")
+    url = 'http://api.renjian.com/statuses/destroy/%s.json' % id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
 
   def PostUpdate(self, status, in_reply_to_status_id=None):
@@ -1326,12 +1406,12 @@ class Api(object):
       A twitter.Status instance representing the message posted.
     '''
     if not self._username:
-      raise TwitterError("The twitter.Api instance must be authenticated.")
+      raise RenjianError("The twitter.Api instance must be authenticated.")
 
     url = 'http://twitter.com/statuses/update.json'
 
     if len(status) > CHARACTER_LIMIT:
-      raise TwitterError("Text must be less than or equal to %d characters. "
+      raise RenjianError("Text must be less than or equal to %d characters. "
                          "Consider using PostUpdates." % CHARACTER_LIMIT)
 
     data = {'status': status}
@@ -1339,7 +1419,7 @@ class Api(object):
       data['in_reply_to_status_id'] = in_reply_to_status_id
     json = self._FetchUrl(url, post_data=data)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
 
   def PostUpdates(self, status, continuation=None, **kwargs):
@@ -1373,38 +1453,6 @@ class Api(object):
     results.append(self.PostUpdate(lines[-1], **kwargs))
     return results
 
-  def GetReplies(self, since=None, since_id=None, page=None): 
-    '''Get a sequence of status messages representing the 20 most recent
-    replies (status updates prefixed with @username) to the authenticating
-    user.
-
-    Args:
-      page: 
-      since:
-        Narrows the returned results to just those statuses created
-        after the specified HTTP-formatted date. [optional]
-      since_id:
-        Returns only public statuses with an ID greater than (that is,
-        more recent than) the specified ID. [Optional]
-
-    Returns:
-      A sequence of twitter.Status instances, one for each reply to the user.
-    '''
-    url = 'http://twitter.com/statuses/replies.json'
-    if not self._username:
-      raise TwitterError("The twitter.Api instance must be authenticated.")
-    parameters = {}
-    if since:
-      parameters['since'] = since
-    if since_id:
-      parameters['since_id'] = since_id
-    if page:
-      parameters['page'] = page
-    json = self._FetchUrl(url, parameters=parameters)
-    data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
-    return [Status.NewFromJsonDict(x) for x in data]
-
   def GetFriends(self, user=None, page=None):
     '''Fetch the sequence of twitter.User instances, one for each friend.
 
@@ -1418,7 +1466,7 @@ class Api(object):
       A sequence of twitter.User instances, one for each friend
     '''
     if not self._username:
-      raise TwitterError("twitter.Api instance must be authenticated")
+      raise RenjianError("twitter.Api instance must be authenticated")
     if user:
       url = 'http://twitter.com/statuses/friends/%s.json' % user 
     else:
@@ -1428,7 +1476,7 @@ class Api(object):
       parameters['page'] = page
     json = self._FetchUrl(url, parameters=parameters)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return [User.NewFromJsonDict(x) for x in data]
 
   def GetFollowers(self, page=None):
@@ -1440,14 +1488,14 @@ class Api(object):
       A sequence of twitter.User instances, one for each follower
     '''
     if not self._username:
-      raise TwitterError("twitter.Api instance must be authenticated")
+      raise RenjianError("twitter.Api instance must be authenticated")
     url = 'http://twitter.com/statuses/followers.json'
     parameters = {}
     if page:
       parameters['page'] = page
     json = self._FetchUrl(url, parameters=parameters)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return [User.NewFromJsonDict(x) for x in data]
 
   def GetFeatured(self):
@@ -1461,7 +1509,7 @@ class Api(object):
     url = 'http://twitter.com/statuses/featured.json'
     json = self._FetchUrl(url)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return [User.NewFromJsonDict(x) for x in data]
 
   def GetUser(self, user):
@@ -1478,7 +1526,7 @@ class Api(object):
     url = 'http://twitter.com/users/show/%s.json' % user
     json = self._FetchUrl(url)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
 
   def GetDirectMessages(self, since=None, since_id=None, page=None):
@@ -1499,7 +1547,7 @@ class Api(object):
     '''
     url = 'http://twitter.com/direct_messages.json'
     if not self._username:
-      raise TwitterError("The twitter.Api instance must be authenticated.")
+      raise RenjianError("The twitter.Api instance must be authenticated.")
     parameters = {}
     if since:
       parameters['since'] = since
@@ -1509,7 +1557,7 @@ class Api(object):
       parameters['page'] = page 
     json = self._FetchUrl(url, parameters=parameters)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return [DirectMessage.NewFromJsonDict(x) for x in data]
 
   def PostDirectMessage(self, user, text):
@@ -1525,12 +1573,12 @@ class Api(object):
       A twitter.DirectMessage instance representing the message posted
     '''
     if not self._username:
-      raise TwitterError("The twitter.Api instance must be authenticated.")
+      raise RenjianError("The twitter.Api instance must be authenticated.")
     url = 'http://twitter.com/direct_messages/new.json'
     data = {'text': text, 'user': user}
     json = self._FetchUrl(url, post_data=data)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return DirectMessage.NewFromJsonDict(data)
 
   def DestroyDirectMessage(self, id):
@@ -1549,7 +1597,7 @@ class Api(object):
     url = 'http://twitter.com/direct_messages/destroy/%s.json' % id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return DirectMessage.NewFromJsonDict(data)
 
   def CreateFriendship(self, user):
@@ -1565,7 +1613,7 @@ class Api(object):
     url = 'http://twitter.com/friendships/create/%s.json' % user
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
 
   def DestroyFriendship(self, user):
@@ -1581,7 +1629,7 @@ class Api(object):
     url = 'http://twitter.com/friendships/destroy/%s.json' % user
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
 
   def CreateFavorite(self, status):
@@ -1598,7 +1646,7 @@ class Api(object):
     url = 'http://twitter.com/favorites/create/%s.json' % status.id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
 
   def DestroyFavorite(self, status):
@@ -1615,7 +1663,7 @@ class Api(object):
     url = 'http://twitter.com/favorites/destroy/%s.json' % status.id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
 
   def GetUserByEmail(self, email):
@@ -1629,7 +1677,7 @@ class Api(object):
     url = 'http://twitter.com/users/show.json?email=%s' % email
     json = self._FetchUrl(url)
     data = simplejson.loads(json)
-    self._CheckForTwitterError(data)
+    self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
 
   def SetCredentials(self, username, password):
@@ -1812,7 +1860,7 @@ class Api(object):
     else:
       return urllib.urlencode(dict([(k, self._Encode(v)) for k, v in post_data.items()]))
 
-  def _CheckForTwitterError(self, data):
+  def _CheckForRenjianError(self, data):
     """Raises a TwitterError if twitter returns an error message.
 
     Args:
@@ -1823,7 +1871,7 @@ class Api(object):
     # Twitter errors are relatively unlikely, so it is faster
     # to check first, rather than try and catch the exception
     if 'error' in data:
-      raise TwitterError(data['error'])
+      raise RenjianError(data['error'])
 
   def _FetchUrl(self,
                 url,
