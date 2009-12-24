@@ -1553,28 +1553,63 @@ class Api(object):
     self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
 
-  def GetDirectMessages(self, since=None, since_id=None, page=None):
+  def GetDirectMessages(self, count=None, since_id=None, page=None):
     '''Returns a list of the direct messages sent to the authenticating user.
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Args:
-      since:
-        Narrows the returned results to just those statuses created
-        after the specified HTTP-formatted date. [optional]
+      count: 
+        Specifies the number of statuses to retrieve. May not be
+        greater than 500. [Optional]
       since_id:
         Returns only public statuses with an ID greater than (that is,
         more recent than) the specified ID. [Optional]
+      page:
+        ...
 
     Returns:
-      A sequence of twitter.DirectMessage instances
+      A sequence of renjian.DirectMessage instances
     '''
-    url = 'http://twitter.com/direct_messages.json'
+    url = 'http://api.renjian.com/direct_messages/receive.json'
     if not self._username:
-      raise RenjianError("The twitter.Api instance must be authenticated.")
+      raise RenjianError("The renjian.Api instance must be authenticated.")
     parameters = {}
-    if since:
-      parameters['since'] = since
+    if count:
+      parameters['count'] = since
+    if since_id:
+      parameters['since_id'] = since_id
+    if page:
+      parameters['page'] = page 
+    json = self._FetchUrl(url, parameters=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return [DirectMessage.NewFromJsonDict(x) for x in data]
+
+  def GetDirectMessagesSent(self, count=None, since_id=None, page=None):
+    '''Returns a list of the direct messages the authenticating user sent.
+
+    The renjian.Api instance must be authenticated.
+
+    Args:
+      count: 
+        Specifies the number of statuses to retrieve. May not be
+        greater than 500. [Optional]
+      since_id:
+        Returns only public statuses with an ID greater than (that is,
+        more recent than) the specified ID. [Optional]
+      page:
+        ...
+
+    Returns:
+      A sequence of renjian.DirectMessage instances
+    '''
+    url = 'http://api.renjian.com/direct_messages/sent.json'
+    if not self._username:
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+    parameters = {}
+    if count:
+      parameters['count'] = since
     if since_id:
       parameters['since_id'] = since_id
     if page:
@@ -1585,21 +1620,22 @@ class Api(object):
     return [DirectMessage.NewFromJsonDict(x) for x in data]
 
   def PostDirectMessage(self, user, text):
-    '''Post a twitter direct message from the authenticated user
+    '''Post a renjian direct message from the authenticated user
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Args:
       user: The ID or screen name of the recipient user.
       text: The message text to be posted.  Must be less than 140 characters.
 
     Returns:
-      A twitter.DirectMessage instance representing the message posted
+      A renjian.DirectMessage instance representing the message posted
     '''
     if not self._username:
-      raise RenjianError("The twitter.Api instance must be authenticated.")
-    url = 'http://twitter.com/direct_messages/new.json'
-    data = {'text': text, 'user': user}
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+    url = 'http://api.renjian.com/direct_messages/new.json'
+    data = {'text': text, 
+            'user': user}
     json = self._FetchUrl(url, post_data=data)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
@@ -1608,7 +1644,7 @@ class Api(object):
   def DestroyDirectMessage(self, id):
     '''Destroys the direct message specified in the required ID parameter.
 
-    The twitter.Api instance must be authenticated, and the
+    The renjian.Api instance must be authenticated, and the
     authenticating user must be the recipient of the specified direct
     message.
 
@@ -1616,9 +1652,9 @@ class Api(object):
       id: The id of the direct message to be destroyed
 
     Returns:
-      A twitter.DirectMessage instance representing the message destroyed
+      A renjian.DirectMessage instance representing the message destroyed
     '''
-    url = 'http://twitter.com/direct_messages/destroy/%s.json' % id
+    url = 'http://api.renjian.com/direct_messages/destroy/%s.json' % id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
