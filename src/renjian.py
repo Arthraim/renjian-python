@@ -1654,6 +1654,8 @@ class Api(object):
     Returns:
       A renjian.DirectMessage instance representing the message destroyed
     '''
+    if not self._username:
+      raise RenjianError("The renjian.Api instance must be authenticated.")
     url = 'http://api.renjian.com/direct_messages/destroy/%s.json' % id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
@@ -1663,15 +1665,20 @@ class Api(object):
   def CreateFriendship(self, user):
     '''Befriends the user specified in the user parameter as the authenticating user.
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Args:
       The ID or screen name of the user to befriend.
     Returns:
-      A twitter.User instance representing the befriended user.
+      A renjian.User instance representing the befriended user.
     '''
-    url = 'http://twitter.com/friendships/create/%s.json' % user
-    json = self._FetchUrl(url, post_data={})
+    if not self._username:
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+    url = 'http://api.renjian.com/friendships/create.json'
+    parameters = {}
+    if user:
+      parameters['user'] = user
+    json = self._FetchUrl(url, post_data=parameters)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
@@ -1679,18 +1686,49 @@ class Api(object):
   def DestroyFriendship(self, user):
     '''Discontinues friendship with the user specified in the user parameter.
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Args:
       The ID or screen name of the user  with whom to discontinue friendship.
     Returns:
-      A twitter.User instance representing the discontinued friend.
+      A renjian.User instance representing the discontinued friend.
     '''
-    url = 'http://twitter.com/friendships/destroy/%s.json' % user
-    json = self._FetchUrl(url, post_data={})
+    if not self._username:
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+    url = 'http://api.renjian.com/friendships/destroy.json'
+    parameters = {}
+    if user:
+      parameters['user'] = user
+    json = self._FetchUrl(url, post_data=parameters)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
+
+  def ExistFriendship(self, user_a, user_b):
+    '''Test if user_a is following user_b
+    
+    Args:
+      user_a: The ID or screen name of the user_a
+      user_b: The ID or screen name of the user_b
+    Returns:
+      A boolean true if user_a is following user_b, else false.  
+    '''  
+    url = 'http://api.renjian.com/friendships/exists.json'
+    parameters = {'user_a': user_a,
+                  'user_b': user_b}
+    json = self._FetchUrl(url, post_data=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return (data.is_follow == "true")
+# TODO: need test
+
+  def GetFollowingIds(self, user):
+    # TODO: COMPLETE IT
+    pass
+
+  def GetFollowerIds(self, user):
+    # TODO: COMPLETE IT
+    pass
 
   def CreateFavorite(self, status):
     '''Favorites the status specified in the status parameter as the authenticating user.
