@@ -15,99 +15,170 @@ import renjian
 
 class StatusTest(unittest.TestCase):
 
-  SAMPLE_JSON = u'''{"id": 349615,"created_at": "2009-12-24 15:20:17 +0800","relative_date": "13分钟前","text": "","source": "网站","truncated": false,"favorited": false,"original_url": "http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423.jpeg","status_type": "PICTURE","link_title": "","link_desc": "","thumbnail": "http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423small.jpeg","link_url": "http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423small.jpeg","level": 1,"all_zt_num": 0,"stick": true,"favoriters": ["asfman"],"user": {"id": 4745,"name": "Kazira","screen_name": "Kazira","description": "品味现实主义烈酒.","profile_image_url": "http://avatar.renjian.com/4745/120x120_6.jpg","url": "http://www.kazira.net","protected": false,"created_at": "2009-12-22 16:47:24 +0800","followers_count": 58,"following_count": 139,"favourites_count": 4,"is_followed_me": 0,"is_following": 0,"score": 230,"gender": 1}},{"id": 349662,"created_at": "2009-12-24 15:31:53 +0800","relative_date": "1分钟前","text": "@renjian :P","source": "网站","truncated": false,"in_reply_to_status_id": 349657,"in_reply_to_user_id": 97,"in_reply_to_screen_name": "renjian","favorited": false,"original_url": "","status_type": "TEXT","link_title": "","link_desc": "","level": 1,"root_screen_name": "renjian","root_status_id": 349657,"all_zt_num": 1,"stick": true,"favoriters": [],"user": {"id": 1479,"name": "kinki喵呜","screen_name": "kinki","description": "吃喝嫖賭抽 坑蒙拐騙偷","profile_image_url": "http://avatar.renjian.com/1479/120x120_12.jpg","url": "","protected": false,"created_at": "2009-08-23 17:58:07 +0800","followers_count": 241,"following_count": 300,"favourites_count": 78,"is_followed_me": 1,"is_following": 1,"score": 1475,"gender": 0}},{"id": 346307,"created_at": "2009-12-23 18:29:59 +0800","relative_date": "21小时前","text": "快来看push","source": "书签","truncated": false,"favorited": false,"original_url": "http://www.javaeye.com/news/12565","status_type": "LINK","link_title": "CometD 1.0发布，基于Ajax push技术的事件路由总线程序 - Web前端 - JavaEye新闻","link_desc": "CometD 1.0发布，基于Ajax push技术的事件路由总线程序 - Web前端 - JavaEye新闻","thumbnail": "http://img1.renjian.com/2009/12/downloadImg/-21271860521261564199629.png","link_url": "http://img1.renjian.com/2009/12/downloadImg/-21271860521261564199629.png","level": 1,"root_status_id": 346307,"all_zt_num": 2,"stick": true,"favoriters": ["pippo"],"user": {"id": 1049,"name": "Arthur","screen_name": "Arthraim","description": "一个做自己喜欢做的事情的小小程序员……","profile_image_url": "http://avatar.renjian.com/1049/120x120_6.jpg","url": "http://arthraim.cn/","protected": false,"created_at": "2009-08-08 02:22:53 +0800","followers_count": 217,"following_count": 125,"favourites_count": 103,"is_followed_me": 0,"is_following": 0,"score": 5343,"gender": 1}}'''
+  SAMPLE_JSON = u'''{"id": 349808,"created_at": "2009-12-24 15:58:34 +0800","relative_date": "13秒前","text": "@j317179140 那个。。你的标签，有点奔放[*_*]","source": "网站","truncated": false,"favorited": false,"original_url": "","status_type": "TEXT","link_title": "","link_desc": "","thumbnail": "","link_url": "","level": 1,"root_status_id": 349808,"all_zt_num": 0,"stick": true,"favoriters": [],"user": {"id": 99,"name": "simona","screen_name": "simona","description": "","profile_image_url": "http://avatar.renjian.com/99/120x120_13.jpg","url": "","protected": false,"created_at": "2009-07-01 17:55:01 +0800","followers_count": 231,"following_count": 207,"favourites_count": 58,"is_followed_me": 1,"is_following": 1,"score": 2052,"gender": 2}},{"id": 349807,"created_at": "2009-12-24 15:58:32 +0800","relative_date": "15秒前","text": "@TonyChuh [//kiss]","source": "网站","truncated": false,"in_reply_to_status_id": 349806,"in_reply_to_user_id": 4931,"in_reply_to_screen_name": "TonyChuh","favorited": false,"original_url": "","status_type": "TEXT","link_title": "","link_desc": "","thumbnail": "","link_url": "","level": 1,"root_screen_name": "TonyChuh","root_status_id": 349806,"all_zt_num": 1,"stick": true,"favoriters": [],"user": {"id": 4930,"name": "剑心","screen_name": "paladin","description": "","profile_image_url": "http://renjian.com/images/buddy_icon/120x120.jpg","url": "","protected": false,"created_at": "2009-12-24 15:46:13 +0800","followers_count": 2,"following_count": 2,"favourites_count": 0,"is_followed_me": 0,"is_following": 0,"score": 433,"gender": 1}},{"id": 349806,"created_at": "2009-12-24 15:58:15 +0800","relative_date": "32秒前","text": "和@paladin 挥手打招呼:\"Yo\"","truncated": false,"favorited": false,"status_type": "TEXT","thumbnail": "","link_url": "","level": 1,"root_status_id": 349806,"all_zt_num": 1,"stick": true,"favoriters": [],"user": {"id": 4931,"name": "TonyChuh","screen_name": "TonyChuh","profile_image_url": "http://renjian.com/images/buddy_icon/120x120.jpg","protected": false,"created_at": "2009-12-24 15:53:15 +0800","followers_count": 1,"following_count": 2,"favourites_count": 0,"is_followed_me": 0,"is_following": 0,"score": 0,"gender": 0}}'''
 
   def _GetSampleUser(self):
-    return renjian.User(id=4745,
-                        name='Kazira',
-                        screen_name='Kazira',
-                        description=u'品味现实主义烈酒.',
-                        profile_image_url='http://avatar.renjian.com/4745/120x120_6.jpg',
-                        url='http://www.kazira.net',
+    return renjian.User(id=1049,
+                        name='Arthur',
+                        screen_name='Arthraim',
+                        description=u'一个做自己喜欢做的事情的小小程序员……',
+                        profile_image_url='http://avatar.renjian.com/1049/120x120_6.jpg',
+                        url='http://arthraim.cn/',
                         protected='false',
-                        created_at='2009-12-22 16:47:24 +0800',
-                        followers_count=58,
-                        following_count=139,
-                        favourites_count=4,
+                        created_at='2009-08-08 02:22:53 +0800',
+                        followers_count=217,
+                        following_count=125,
+                        favourites_count=103,
                         is_followed_me=0,
                         is_following=0,
-                        score=230,
+                        score=5343,
                         gender=1)
 
   def _GetSampleStatus(self):
-    return renjian.Status(id=349615,
-                          created_at='2009-12-24 15:20:17 +0800',
-                          relative_date='13分钟前',
-                          text='say something',
+    return renjian.Status(id=349507,
+                          created_at='2009-12-24 14:33:01 +0800',
+                          relative_date='1小时前',
+                          text='@kinki [:O]',
                           source='网站',
                           truncated='false',
+                          in_reply_to_status_id=349505,
+                          in_reply_to_user_id=1479,
+                          in_reply_to_screen_name='kinki',
                           favorited='false',
-                          original_url='http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423.jpeg',
-                          status_type='PICTURE',
-                          link_title=None,
-                          link_desc=None,
-                          thumbnail='http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423small.jpeg',
-                          link_url='http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423small.jpeg',
+                          original_url='http://arthraim.cn/',
+                          status_type='LINK',
+                          link_title='Arthraim.cn - programing',
+                          link_desc='my fucking blog',
+                          thumbnail='http://avatar.renjian.com/1049/120x120_3.jpg',
                           level=1,
-                          root_status_id=349615,
-                          all_zt_num=1,
+                          root_screen_name='Arthraim',
+                          root_status_id=349381,
+                          all_zt_num=3,
                           stick='true',
-                          favoriters=['asfman'],
+                          favoriters=['asfman','pippo'],
                           user=self._GetSampleUser())
 
   def testInit(self):
     '''Test the renjian.Status constructor'''
-    status = renjian.Status(id=349615,
-                          created_at='2009-12-24 15:47:56 +0800',
-                          relative_date='13分钟前',
-                          text='say something',
+    status = renjian.Status(id=349507,
+                          created_at='2009-12-24 14:33:01 +0800',
+                          relative_date='1小时前',
+                          text='@kinki [:O]',
                           source='网站',
                           truncated='false',
+                          in_reply_to_status_id=349505,
+                          in_reply_to_user_id=1479,
+                          in_reply_to_screen_name='kinki',
                           favorited='false',
-                          original_url='http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423.jpeg',
-                          status_type='PICTURE',
-                          link_title=u'随便叽歪几句中文',
-                          link_desc=u'继续叽歪',
-                          thumbnail='http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423small.jpeg',
-                          link_url='http://img1.renjian.com/2009/12/4745/47efa3d5bedbe2662380ebca6709e8f5_1261639217539_357x423small.jpeg',
+                          original_url='http://arthraim.cn/',
+                          status_type='LINK',
+                          link_title='Arthraim.cn - programing',
+                          link_desc='my fucking blog',
+                          thumbnail='http://avatar.renjian.com/1049/120x120_3.jpg',
                           level=1,
-                          root_status_id=349615,
-                          all_zt_num=1,
+                          root_screen_name='Arthraim',
+                          root_status_id=349381,
+                          all_zt_num=3,
                           stick='true',
-                          favoriters=['asfman','arthraim'],
+                          favoriters=['asfman','pippo'],
                           user=self._GetSampleUser())
 
   def testGettersAndSetters(self):
     '''Test all of the renjian.Status getters and setters'''
     status = renjian.Status()
-    status.SetId(4391023)
-    self.assertEqual(4391023, status.GetId())
-    created_at = calendar.timegm((2007, 1, 26, 23, 17, 14, -1, -1, -1))
-    status.SetCreatedAt('2009-12-24 15:47:56 +0800')
-    self.assertEqual('2009-12-24 15:47:56 +0800', status.GetCreatedAt())
-    self.assertEqual(created_at, status.GetCreatedAtInSeconds())
-    status.SetNow(created_at + 10)
-    self.assertEqual("about 10 seconds ago", status.GetRelativeCreatedAt())
-    status.SetText(u'asdfasfdasdfasdfsad')
-    self.assertEqual(u'asdf.',
-                     status.GetText())
+    status.SetId(349507)
+    self.assertEqual(349507, status.GetId())
+    status.SetCreatedAt('2009-12-24 14:33:01 +0800')
+    self.assertEqual('2009-12-24 14:33:01 +0800', status.GetCreatedAt())
+    status.SetRelativeDate('1小时前')
+    self.assertEqual('1小时前', status.GetRelativeDate())
+    status.SetText('@kinki [:O]')
+    self.assertEqual('@kinki [:O]', status.GetText())
+    status.SetSource('网站')
+    self.assertEqual('网站', status.GetSource())
+    status.SetTruncated('false')
+    self.assertEqual('false', status.GetTruncated())
+    status.SetInReplyToStatusId(349505)
+    self.assertEqual(349505, status.GetInReplyToStatusId())
+    status.SetInReplyToUserId(1479)
+    self.assertEqual(1479, status.GetInReplyToUserId())
+    status.SetInReplyToScreenName('kinki')
+    self.assertEqual('kinki', status.GetInReplyToScreenName())
+    status.SetFavorited('false')
+    self.assertEqual('false', status.GetFavorited())
+    status.SetOriginalUrl('http://arthraim.cn/')
+    self.assertEqual('http://arthraim.cn/', status.GetOriginalUrl())
+    status.SetStatusType('LINK')
+    self.assertEqual('LINK', status.GetStatusType())
+    status.SetLinkTitle('Arthraim.cn - programing')
+    self.assertEqual('Arthraim.cn - programing', status.GetLinkTitle())
+    status.SetLinkDesc('my fucking blog')
+    self.assertEqual('my fucking blog', status.GetLinkDesc())
+    status.SetThumbnail('http://avatar.renjian.com/1049/120x120_3.jpg')
+    self.assertEqual('http://avatar.renjian.com/1049/120x120_3.jpg', status.GetThumbnail())
+    status.SetLevel(1)
+    self.assertEqual(1, status.GetLevel())
+    status.SetRootScreenName('Arthraim')
+    self.assertEqual('Arthraim', status.GetRootScreenName())
+    status.SetRootStatusId(349381)
+    self.assertEqual(349381, status.GetRootStatusId())
+    status.SetAllZtNum(3)
+    self.assertEqual(3, status.GetAllZtNum())
+    status.SetStick('true')
+    self.assertEqual('true', status.GetStick())
+    status.SetFavoriters(['asfman','pippo'])
+    self.assertEqual(['asfman','pippo'], status.GetFavoriters())
     status.SetUser(self._GetSampleUser())
-    self.assertEqual(718443, status.GetUser().id)
+    self.assertEqual(1049, status.GetUser().id)
 
   def testProperties(self):
     '''Test all of the renjian.Status properties'''
     status = renjian.Status()
-    status.id = 1
-    self.assertEqual(1, status.id)
-    created_at = calendar.timegm((2007, 1, 26, 23, 17, 14, -1, -1, -1))
-    status.created_at = 'Fri Jan 26 23:17:14 +0000 2007'
-    self.assertEqual('Fri Jan 26 23:17:14 +0000 2007', status.created_at)
-    self.assertEqual(created_at, status.created_at_in_seconds)
-    status.now = created_at + 10
-    self.assertEqual('about 10 seconds ago', status.relative_created_at)
+    status.id = 349507
+    self.assertEqual(349507, status.id)
+    status.created_at = '2009-12-24 14:33:01 +0800'
+    self.assertEqual('2009-12-24 14:33:01 +0800', status.created_at)
+    status.relative_date = '1小时前'
+    self.assertEqual('1小时前', status.relative_date)
+    status.text = '@kinki [:O]'
+    self.assertEqual('@kinki [:O]', status.text)
+    status.source = '网站'
+    self.assertEqual('网站', status.source)
+    status.truncated = 'false'
+    self.assertEqual('false', status.truncated)
+    status.in_reply_to_status_id = 349505
+    self.assertEqual(349505, status.in_reply_to_status_id)
+    status.in_reply_to_user_id = 1479
+    self.assertEqual(1479, status.in_reply_to_user_id)
+    status.in_reply_to_screen_name = 'kinki'
+    self.assertEqual('kinki', status.in_reply_to_screen_name)
+    status.favorited = 'false'
+    self.assertEqual('false', status.favorited)
+    status.original_url = 'http://arthraim.cn/'
+    self.assertEqual('http://arthraim.cn/', status.original_url)
+    status.status_type = 'LINK'
+    self.assertEqual('LINK', status.status_type)
+    status.link_title = 'Arthraim.cn - programing'
+    self.assertEqual('Arthraim.cn - programing', status.link_title)
+    status.link_desc = 'my fucking blog'
+    self.assertEqual('my fucking blog', status.link_desc)
+    status.thumbnail = 'http://avatar.renjian.com/1049/120x120_3.jpg'
+    self.assertEqual('http://avatar.renjian.com/1049/120x120_3.jpg', status.thumbnail)
+    status.level = 1
+    self.assertEqual(1, status.level)
+    status.root_screen_name = 'Arthraim'
+    self.assertEqual('Arthraim', status.root_screen_name)
+    status.root_status_id = 349381
+    self.assertEqual(349381, status.root_status_id)
+    status.all_zt_num = 3
+    self.assertEqual(3, status.all_zt_num)
+    status.stick = 'true'
+    self.assertEqual('true', status.stick)
+    status.favoriters = ['asfman','pippo']
+    self.assertEqual(['asfman','pippo'], status.favoriters)
     status.user = self._GetSampleUser()
-    self.assertEqual(718443, status.user.id)
-
+    self.assertEqual(1049, status.user.id)
+"""
   def _ParseDate(self, string):
     return calendar.timegm(time.strptime(string, '%b %d %H:%M:%S %Y'))
 
@@ -177,7 +248,7 @@ class StatusTest(unittest.TestCase):
     data = simplejson.loads(StatusTest.SAMPLE_JSON)
     status = renjian.Status.NewFromJsonDict(data)
     self.assertEqual(self._GetSampleStatus(), status)
-"""
+
 class UserTest(unittest.TestCase):
 
   SAMPLE_JSON = '''{"description": "Indeterminate things", "id": 673483, "location": "San Francisco, CA", "name": "DeWitt", "profile_image_url": "http://renjian.com/system/user/profile_image/673483/normal/me.jpg", "screen_name": "dewitt", "status": {"created_at": "Fri Jan 26 17:28:19 +0000 2007", "id": 4212713, "text": "\\"Select all\\" and archive your Gmail inbox.  The page loads so much faster!"}, "url": "http://unto.net/"}'''

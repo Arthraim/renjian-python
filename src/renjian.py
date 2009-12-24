@@ -56,6 +56,7 @@ class Status(object):
     status.status_type
     status.link_title
     status.link_desc
+    status.thumbnail
     status.level
     status.root_screen_name
     status.root_status_id
@@ -79,6 +80,7 @@ class Status(object):
                status_type=None,
                link_title=None,
                link_desc=None,
+               thumbnail=None,
                level=None,
                root_screen_name=None,
                root_status_id=None,
@@ -108,6 +110,7 @@ class Status(object):
     self.status_type=status_type
     self.link_title=link_title
     self.link_desc=link_desc
+    self.thumbnail=thumbnail
     self.level=level
     self.root_screen_name=root_screen_name
     self.root_status_id=root_status_id
@@ -229,6 +232,13 @@ class Status(object):
                    doc='The level of this status.' 
                        'It will be 1 if you post it first.')
   
+  def GetThumbnail(self):
+      return self._thumbnail
+  def SetThumbnail(self, thumbnail):
+      self._thumbnail = thumbnail
+  thumbnail = property(GetThumbnail, SetThumbnail,
+                   doc='The thumbnail url of the link or picture.')
+  
   def GetRootScreenName(self):
       return self._root_screen_name
   def SetRootScreenName(self, root_screen_name):
@@ -320,6 +330,7 @@ class Status(object):
              self.status_type == other.status_type and \
              self.link_title == other.link_title and \
              self.link_desc == other.link_desc and \
+             self.thumbnail == other.thumbnail and \
              self.level == other.level and \
              self.root_screen_name == other.root_screen_name and \
              self.root_status_id == other.root_status_id and \
@@ -385,6 +396,8 @@ class Status(object):
       data['link_title'] = self.link_title
     if self.link_desc:
       data['link_desc'] = self.link_desc
+    if self.thumbnail:
+      data['thumbnail'] = self.thumbnail    
     if self.level:
       data['level'] = self.level
     if self.root_screen_name:
@@ -428,6 +441,7 @@ class Status(object):
                   status_type=data.get('status_type', None),
                   link_title=data.get('link_title', None),
                   link_desc=data.get('link_desc', None),
+                  thumbnail=data.get('thumbnail', None),
                   level=data.get('level', None),
                   root_screen_name=data.get('root_screen_name', None),
                   root_status_id=data.get('root_status_id', None),
@@ -584,14 +598,14 @@ class User(object):
   
   def GetScore(self):
     return self._score
-  def SetScore(self, is_following):
+  def SetScore(self, score):
     self._score = score
   score = property(GetScore, SetScore,
                    doc='The score who this user has.')
   
   def GetGender(self):
     return self._gender
-  def SetGender(self, is_following):
+  def SetGender(self, gender):
     self._gender = gender
   gender = property(GetGender, SetGender,
                    doc='The gender of this user.')
