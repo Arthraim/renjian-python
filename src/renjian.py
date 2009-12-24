@@ -1387,13 +1387,13 @@ class Api(object):
     self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
 
-  def PostUpdate(self, status, in_reply_to_status_id=None):
-    '''Post a twitter status message from the authenticated user.
+  def PostText(self, text, in_reply_to_status_id=None):
+    '''Post a renjian pure text status message from the authenticated user.
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Args:
-      status:
+      text:
         The message text to be posted.  Must be less than or equal to
         140 characters.
       in_reply_to_status_id:
@@ -1403,18 +1403,19 @@ class Api(object):
         message being replied to.  Invalid/missing status IDs will be
         ignored. [Optional]
     Returns:
-      A twitter.Status instance representing the message posted.
+      A renjian.Status instance representing the message posted.
     '''
     if not self._username:
-      raise RenjianError("The twitter.Api instance must be authenticated.")
+      raise RenjianError("The renjian.Api instance must be authenticated.")
 
-    url = 'http://twitter.com/statuses/update.json'
+    url = 'http://api.renjian.com/statuses/update.json'
 
-    if len(status) > CHARACTER_LIMIT:
+    if len(text) > CHARACTER_LIMIT:
       raise RenjianError("Text must be less than or equal to %d characters. "
                          "Consider using PostUpdates." % CHARACTER_LIMIT)
 
-    data = {'status': status}
+    data = {'text': text,
+            'status_type': 'TEXT'}
     if in_reply_to_status_id:
       data['in_reply_to_status_id'] = in_reply_to_status_id
     json = self._FetchUrl(url, post_data=data)
@@ -1422,91 +1423,112 @@ class Api(object):
     self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
 
-  def PostUpdates(self, status, continuation=None, **kwargs):
-    '''Post one or more twitter status messages from the authenticated user.
+  def PostLink(self, 
+               text, 
+               original_url=None,
+               in_reply_to_status_id=None,
+               link_title=None,
+               link_desc=None):
+    '''Post a renjian status message with a link from the authenticated user.
 
-    Unlike api.PostUpdate, this method will post multiple status updates
-    if the message is longer than 140 characters.
-
-    The twitter.Api instance must be authenticated.
-
-    Args:
-      status:
-        The message text to be posted.  May be longer than 140 characters.
-      continuation:
-        The character string, if any, to be appended to all but the
-        last message.  Note that Twitter strips trailing '...' strings
-        from messages.  Consider using the unicode \u2026 character
-        (horizontal ellipsis) instead. [Defaults to None]
-      **kwargs:
-        See api.PostUpdate for a list of accepted parameters.
-    Returns:
-      A of list twitter.Status instance representing the messages posted.
-    '''
-    results = list()
-    if continuation is None:
-      continuation = ''
-    line_length = CHARACTER_LIMIT - len(continuation)
-    lines = textwrap.wrap(status, line_length)
-    for line in lines[0:-1]:
-      results.append(self.PostUpdate(line + continuation, **kwargs))
-    results.append(self.PostUpdate(lines[-1], **kwargs))
-    return results
-
-  def GetFriends(self, user=None, page=None):
-    '''Fetch the sequence of twitter.User instances, one for each friend.
+    The renjian.Api instance must be authenticated.
 
     Args:
-      user: the username or id of the user whose friends you are fetching.  If
-      not specified, defaults to the authenticated user. [optional]
-
-    The twitter.Api instance must be authenticated.
-
+      text:
+        The message text to be posted.  Must be less than or equal to
+        140 characters.
+      original_url:
+        The link's url. It must be filled in.
+      in_reply_to_status_id:
+        The ID of an existing status that the status to be posted is
+        in reply to.  This implicitly sets the in_reply_to_user_id
+        attribute of the resulting status to the user ID of the
+        message being replied to.  Invalid/missing status IDs will be
+        ignored. [Optional]
+      link_title:
+        The title the the link which the user post, if client do not want
+        to  get the title itself ,please fill it with the link's url. [Optional]
+      link_desc:
+        Some word describe about the link which the user post, 
+        if client do not want to  get the title itself ,
+        please fill it with the link's url. [Optional]
+      
     Returns:
-      A sequence of twitter.User instances, one for each friend
+      A renjian.Status instance representing the message posted.
     '''
     if not self._username:
-      raise RenjianError("twitter.Api instance must be authenticated")
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+
+    url = 'http://api.renjian.com/statuses/update.json'
+
+    if len(text) > CHARACTER_LIMIT:
+      raise RenjianError("Text must be less than or equal to %d characters. "
+                         "Consider using PostUpdates." % CHARACTER_LIMIT)
+      
+    if not original_url:
+      raise RenjianError("original_url must not be null.")
+
+    data = {'text': text,
+            'status_type': 'LINK',
+            'original_url': original_url}
+    if in_reply_to_status_id:
+      data['in_reply_to_status_id'] = in_reply_to_status_id
+    if link_title:
+      data['link_title'] = link_title
+    if link_desc:
+      data['link_desc'] = link_desc
+    json = self._FetchUrl(url, post_data=data)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return Status.NewFromJsonDict(data)
+
+  def PostPicture(self):
+    pass
+    # TODO: status_type = 'PICTURE' 
+  
+  def GetFollowings(self, user=None):
+    '''Fetch the sequence of renjian.User instances, one for each friend.
+
+    Args:
+      user: 
+        the username or id of the user whose followings you are fetching.  If
+        not specified, defaults to the authenticated user. [optional]
+
+    The renjian.Api instance must be authenticated.
+
+    Returns:
+      A sequence of renjian.User instances, one for each friend
+    '''
+    if not self._username:
+      raise RenjianError("renjian.Api instance must be authenticated")
     if user:
-      url = 'http://twitter.com/statuses/friends/%s.json' % user 
+      url = 'http://api.renjian.com/statuses/friends/%s.json' % user 
     else:
-      url = 'http://twitter.com/statuses/friends.json'
-    parameters = {}
-    if page:
-      parameters['page'] = page
-    json = self._FetchUrl(url, parameters=parameters)
+      url = 'http://api.renjian.com/statuses/friends.json'
+    json = self._FetchUrl(url)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
     return [User.NewFromJsonDict(x) for x in data]
 
-  def GetFollowers(self, page=None):
-    '''Fetch the sequence of twitter.User instances, one for each follower
+  def GetFollowers(self, user=None):
+    '''Fetch the sequence of renjian.User instances, one for each follower
+    
+    Args:
+      user: 
+        the username or id of the user whose followers you are fetching.  If
+        not specified, defaults to the authenticated user. [optional]
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Returns:
-      A sequence of twitter.User instances, one for each follower
+      A sequence of renjian.User instances, one for each follower
     '''
     if not self._username:
-      raise RenjianError("twitter.Api instance must be authenticated")
-    url = 'http://twitter.com/statuses/followers.json'
-    parameters = {}
-    if page:
-      parameters['page'] = page
-    json = self._FetchUrl(url, parameters=parameters)
-    data = simplejson.loads(json)
-    self._CheckForRenjianError(data)
-    return [User.NewFromJsonDict(x) for x in data]
-
-  def GetFeatured(self):
-    '''Fetch the sequence of twitter.User instances featured on twitter.com
-
-    The twitter.Api instance must be authenticated.
-
-    Returns:
-      A sequence of twitter.User instances
-    '''
-    url = 'http://twitter.com/statuses/featured.json'
+      raise RenjianError("renjian.Api instance must be authenticated")
+    if user:
+      url = 'http://api.renjian.com/statuses/followers/%s.json' % user 
+    else:
+      url = 'http://api.renjian.com/statuses/followers.json'
     json = self._FetchUrl(url)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
@@ -1515,15 +1537,17 @@ class Api(object):
   def GetUser(self, user):
     '''Returns a single user.
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Args:
       user: The username or id of the user to retrieve.
 
     Returns:
-      A twitter.User instance representing that user
+      A renjian.User instance representing that user
     '''
-    url = 'http://twitter.com/users/show/%s.json' % user
+    if not user:
+      raise RenjianError("user must not be null")
+    url = 'http://api.renjian.com/users/show/%s.json' % user
     json = self._FetchUrl(url)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
