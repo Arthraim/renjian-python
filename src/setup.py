@@ -14,23 +14,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-'''The setup and build script for the python-twitter library.'''
+'''The setup and build script for the renjian-python library.'''
 
-__author__ = 'dewitt@google.com'
-__version__ = '0.6'
+__author__ = 'Arthur Wang'
+__version__ = '0.1'
 
 
 # The base package metadata to be used by both distutils and setuptools
 METADATA = dict(
-  name = "python-twitter",
+  name = "renjian-python",
   version = __version__,
-  py_modules = ['twitter'],
-  author='DeWitt Clinton',
-  author_email='dewitt@google.com',
-  description='A python wrapper around the Twitter API',
+  py_modules = ['renjian'],
+  author='Arthur Wang',
+  author_email='arthraim@gmail.com',
+  description='A python wrapper around the Renjian API',
   license='Apache License 2.0',
-  url='http://code.google.com/p/python-twitter/',
-  keywords='twitter api',
+  url='http://github.com/Arthraim/renjian-python',
+  keywords='renjian api',
 )
 
 # Extra package metadata to be used only if setuptools is installed
@@ -45,7 +45,7 @@ SETUPTOOLS_METADATA = dict(
     'Topic :: Communications :: Chat',
     'Topic :: Internet',
   ],
-  test_suite = 'twitter_test.suite',
+  test_suite = 'renjian_test.suite',
 )
 
 

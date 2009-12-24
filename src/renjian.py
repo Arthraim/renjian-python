@@ -1,4 +1,5 @@
 #!/usr/bin/python2.6
+# coding=UTF8
 
 __author__ = 'Arthur Wang'
 __version__ = '0.1'
@@ -63,7 +64,7 @@ class Status(object):
     status.favoriters
     status.user
   '''
-  def __init__(self,
+  def __init__(self, 
                id=None,
                created_at=None,
                relative_date=None,
@@ -83,7 +84,7 @@ class Status(object):
                root_status_id=None,
                all_zt_num=None,
                stick=None,
-               favoriters,
+               favoriters=None,
                user=None):
     '''An object to hold a Renjian status message.
 
@@ -195,7 +196,7 @@ class Status(object):
       return self._original_url
   def SetOriginalUrl(self, original_url):
       self._original_url = original_url
-  original_url = property(GetOriginal_url, SetOriginalUrl,
+  original_url = property(GetOriginalUrl, SetOriginalUrl,
                           doc='The original url of the link or picture that this status contains.')
   
   def GetStatusType(self):
@@ -271,7 +272,8 @@ class Status(object):
                   doc='A renjian.User reprenting the entity posting this '
                       'status message')
 
-  '''need modify
+  #TODO: need modify
+  '''
   def GetRelativeCreatedAt(self):
     fudge = 1.25
     delta  = long(self.now) - long(self.created_at_in_seconds)
