@@ -133,12 +133,12 @@ class Status(object):
   created_at = property(GetCreatedAt, SetCreatedAt,
                         doc='The time this status message was posted. ')
 
-  def GetCreatedAtInSeconds(self):
-    return calendar.timegm(rfc822.parsedate(self.created_at))
-  created_at_in_seconds = property(GetCreatedAtInSeconds,
-                                   doc="The time this status message was "
-                                       "posted, in seconds since the epoch")
-  
+#  def GetCreatedAtInSeconds(self):
+#    return calendar.timegm(rfc822.parsedate(self.created_at))
+#  created_at_in_seconds = property(GetCreatedAtInSeconds,
+#                                   doc="The time this status message was "
+#                                       "posted, in seconds since the epoch")
+
   def GetRelativeDate(self):
     return self._relative_date
   def SetRelativeDate(self, relative_date):

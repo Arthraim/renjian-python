@@ -15,7 +15,8 @@ import renjian
 
 class StatusTest(unittest.TestCase):
 
-  SAMPLE_JSON = u'''{"id": 349808,"created_at": "2009-12-24 15:58:34 +0800","relative_date": "13秒前","text": "@j317179140 那个。。你的标签，有点奔放[*_*]","source": "网站","truncated": false,"favorited": false,"original_url": "","status_type": "TEXT","link_title": "","link_desc": "","thumbnail": "","link_url": "","level": 1,"root_status_id": 349808,"all_zt_num": 0,"stick": true,"favoriters": [],"user": {"id": 99,"name": "simona","screen_name": "simona","description": "","profile_image_url": "http://avatar.renjian.com/99/120x120_13.jpg","url": "","protected": false,"created_at": "2009-07-01 17:55:01 +0800","followers_count": 231,"following_count": 207,"favourites_count": 58,"is_followed_me": 1,"is_following": 1,"score": 2052,"gender": 2}},{"id": 349807,"created_at": "2009-12-24 15:58:32 +0800","relative_date": "15秒前","text": "@TonyChuh [//kiss]","source": "网站","truncated": false,"in_reply_to_status_id": 349806,"in_reply_to_user_id": 4931,"in_reply_to_screen_name": "TonyChuh","favorited": false,"original_url": "","status_type": "TEXT","link_title": "","link_desc": "","thumbnail": "","link_url": "","level": 1,"root_screen_name": "TonyChuh","root_status_id": 349806,"all_zt_num": 1,"stick": true,"favoriters": [],"user": {"id": 4930,"name": "剑心","screen_name": "paladin","description": "","profile_image_url": "http://renjian.com/images/buddy_icon/120x120.jpg","url": "","protected": false,"created_at": "2009-12-24 15:46:13 +0800","followers_count": 2,"following_count": 2,"favourites_count": 0,"is_followed_me": 0,"is_following": 0,"score": 433,"gender": 1}},{"id": 349806,"created_at": "2009-12-24 15:58:15 +0800","relative_date": "32秒前","text": "和@paladin 挥手打招呼:\"Yo\"","truncated": false,"favorited": false,"status_type": "TEXT","thumbnail": "","link_url": "","level": 1,"root_status_id": 349806,"all_zt_num": 1,"stick": true,"favoriters": [],"user": {"id": 4931,"name": "TonyChuh","screen_name": "TonyChuh","profile_image_url": "http://renjian.com/images/buddy_icon/120x120.jpg","protected": false,"created_at": "2009-12-24 15:53:15 +0800","followers_count": 1,"following_count": 2,"favourites_count": 0,"is_followed_me": 0,"is_following": 0,"score": 0,"gender": 0}}'''
+  SAMPLE_JSON = '''{"id":349507,"created_at":"2009-12-24 14:33:01 +0800","relative_date":"1小时前","text":"@kinki[:O]","source":"网站","truncated":false,"in_reply_to_status_id":349505,"in_reply_to_user_id":1479,"in_reply_to_screen_name":"kinki","favorited":false,"original_url":"http://arthraim.cn/","status_type":"LINK","link_title":"Arthraim.cn - programing","link_desc":"my fucking blog","thunmbnail":"http://avatar.renjian.com/1049/120x120_3.jpg","level":1,"root_screen_name":"Arthraim","root_status_id":349381,"all_zt_num":3,"stick":true,"favoriters":["asfman","pippo"],"user":{"id":1049,"name":"Arthur","screen_name":"Arthraim","description":"一个做自己喜欢做的事情的小小程序员……","profile_image_url":"http://avatar.renjian.com/1049/120x120_6.jpg","url":"http://arthraim.cn/","protected":false,"created_at":"2009-08-08 02:22:53 +0800","followers_count":217,"following_count":125,"favourites_count":103,"is_followed_me":0,"is_following":0,"score":5343,"gender":1}}'''
+  #SAMPLE_JSON = '''{"created_at": "Fri Jan 26 23:17:14 +0000 2007", "id": 4391023, "text": "A l\u00e9gp\u00e1rn\u00e1s haj\u00f3m tele van angoln\u00e1kkal.", "user": {"description": "Canvas. JC Penny. Three ninety-eight.", "id": 718443, "location": "Okinawa, Japan", "name": "Kesuke Miyagi", "profile_image_url": "http://twitter.com/system/user/profile_image/718443/normal/kesuke.png", "screen_name": "kesuke", "url": "http://twitter.com/kesuke"}}'''
 
   def _GetSampleUser(self):
     return renjian.User(id=1049,
@@ -178,77 +179,98 @@ class StatusTest(unittest.TestCase):
     self.assertEqual(['asfman','pippo'], status.favoriters)
     status.user = self._GetSampleUser()
     self.assertEqual(1049, status.user.id)
-"""
-  def _ParseDate(self, string):
-    return calendar.timegm(time.strptime(string, '%b %d %H:%M:%S %Y'))
 
-  def testRelativeCreatedAt(self):
-    '''Test various permutations of Status relative_created_at'''
-    status = renjian.Status(created_at='Fri Jan 01 12:00:00 +0000 2007')
-    status.now = self._ParseDate('Jan 01 12:00:00 2007')
-    self.assertEqual('about a second ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:00:01 2007')
-    self.assertEqual('about a second ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:00:02 2007')
-    self.assertEqual('about 2 seconds ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:00:05 2007')
-    self.assertEqual('about 5 seconds ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:00:50 2007')
-    self.assertEqual('about a minute ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:01:00 2007')
-    self.assertEqual('about a minute ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:01:10 2007')
-    self.assertEqual('about a minute ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:02:00 2007')
-    self.assertEqual('about 2 minutes ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:31:50 2007')
-    self.assertEqual('about 31 minutes ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 12:50:00 2007')
-    self.assertEqual('about an hour ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 13:00:00 2007')
-    self.assertEqual('about an hour ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 13:10:00 2007')
-    self.assertEqual('about an hour ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 14:00:00 2007')
-    self.assertEqual('about 2 hours ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 01 19:00:00 2007')
-    self.assertEqual('about 7 hours ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 02 11:30:00 2007')
-    self.assertEqual('about a day ago', status.relative_created_at)
-    status.now = self._ParseDate('Jan 04 12:00:00 2007')
-    self.assertEqual('about 3 days ago', status.relative_created_at)
-    status.now = self._ParseDate('Feb 04 12:00:00 2007')
-    self.assertEqual('about 34 days ago', status.relative_created_at)
+#  def _ParseDate(self, string):
+#    return calendar.timegm(time.strptime(string, '%b %d %H:%M:%S %Y'))
+#
+#  def testRelativeCreatedAt(self):
+#    '''Test various permutations of Status relative_created_at'''
+#    status = renjian.Status(created_at='Fri Jan 01 12:00:00 +0000 2007')
+#    status.now = self._ParseDate('Jan 01 12:00:00 2007')
+#    self.assertEqual('about a second ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:00:01 2007')
+#    self.assertEqual('about a second ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:00:02 2007')
+#    self.assertEqual('about 2 seconds ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:00:05 2007')
+#    self.assertEqual('about 5 seconds ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:00:50 2007')
+#    self.assertEqual('about a minute ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:01:00 2007')
+#    self.assertEqual('about a minute ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:01:10 2007')
+#    self.assertEqual('about a minute ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:02:00 2007')
+#    self.assertEqual('about 2 minutes ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:31:50 2007')
+#    self.assertEqual('about 31 minutes ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 12:50:00 2007')
+#    self.assertEqual('about an hour ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 13:00:00 2007')
+#    self.assertEqual('about an hour ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 13:10:00 2007')
+#    self.assertEqual('about an hour ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 14:00:00 2007')
+#    self.assertEqual('about 2 hours ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 01 19:00:00 2007')
+#    self.assertEqual('about 7 hours ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 02 11:30:00 2007')
+#    self.assertEqual('about a day ago', status.relative_created_at)
+#    status.now = self._ParseDate('Jan 04 12:00:00 2007')
+#    self.assertEqual('about 3 days ago', status.relative_created_at)
+#    status.now = self._ParseDate('Feb 04 12:00:00 2007')
+#    self.assertEqual('about 34 days ago', status.relative_created_at)
 
   def testAsJsonString(self):
     '''Test the renjian.Status AsJsonString method'''
-    self.assertEqual(StatusTest.SAMPLE_JSON,
-                     self._GetSampleStatus().AsJsonString())
+    print(self._GetSampleStatus().AsJsonString())
+    print(StatusTest.SAMPLE_JSON)
+    self.assertEqual(StatusTest.SAMPLE_JSON, self._GetSampleStatus().AsJsonString())
+    # sequence is not same, dictionary will sort the properties
 
   def testAsDict(self):
     '''Test the renjian.Status AsDict method'''
     status = self._GetSampleStatus()
     data = status.AsDict()
-    self.assertEqual(4391023, data['id'])
-    self.assertEqual('Fri Jan 26 23:17:14 +0000 2007', data['created_at'])
-    self.assertEqual(u'asdfasdfs.', data['text'])
-    self.assertEqual(718443, data['user']['id'])
+    self.assertEqual(349507, data['id'])
+    self.assertEqual('2009-12-24 14:33:01 +0800', data['created_at'])
+    self.assertEqual(u'@kinki [:O]', data['text'])
+    self.assertEqual(1049, data['user']['id'])
 
   def testEq(self):
     '''Test the renjian.Status __eq__ method'''
     status = renjian.Status()
-    status.created_at = 'Fri Jan 26 23:17:14 +0000 2007'
-    status.id = 4391023
-    status.text = u'df'
-    status.user = self._GetSampleUser()
+    status.id=349507
+    status.created_at='2009-12-24 14:33:01 +0800'
+    status.relative_date='1小时前'
+    status.text='@kinki [:O]'
+    status.source='网站'
+    status.truncated='false'
+    status.in_reply_to_status_id=349505
+    status.in_reply_to_user_id=1479
+    status.in_reply_to_screen_name='kinki'
+    status.favorited='false'
+    status.original_url='http://arthraim.cn/'
+    status.status_type='LINK'
+    status.link_title='Arthraim.cn - programing'
+    status.link_desc='my fucking blog'
+    status.thumbnail='http://avatar.renjian.com/1049/120x120_3.jpg'
+    status.level=1
+    status.root_screen_name='Arthraim'
+    status.root_status_id=349381
+    status.all_zt_num=3
+    status.stick='true'
+    status.favoriters=['asfman','pippo']
+    status.user=self._GetSampleUser()
     self.assertEqual(status, self._GetSampleStatus())
 
   def testNewFromJsonDict(self):
     '''Test the renjian.Status NewFromJsonDict method'''
     data = simplejson.loads(StatusTest.SAMPLE_JSON)
     status = renjian.Status.NewFromJsonDict(data)
+    mine = self._GetSampleStatus()
     self.assertEqual(self._GetSampleStatus(), status)
-
+"""
 class UserTest(unittest.TestCase):
 
   SAMPLE_JSON = '''{"description": "Indeterminate things", "id": 673483, "location": "San Francisco, CA", "name": "DeWitt", "profile_image_url": "http://renjian.com/system/user/profile_image/673483/normal/me.jpg", "screen_name": "dewitt", "status": {"created_at": "Fri Jan 26 17:28:19 +0000 2007", "id": 4212713, "text": "\\"Select all\\" and archive your Gmail inbox.  The page loads so much faster!"}, "url": "http://unto.net/"}'''
