@@ -237,7 +237,7 @@ class Status(object):
   def SetThumbnail(self, thumbnail):
       self._thumbnail = thumbnail
   thumbnail = property(GetThumbnail, SetThumbnail,
-                   doc='The thumbnail url of the link or picture.')
+                       doc='The thumbnail url of the link or picture.')
   
   def GetRootScreenName(self):
       return self._root_screen_name
@@ -608,7 +608,7 @@ class User(object):
   def SetGender(self, gender):
     self._gender = gender
   gender = property(GetGender, SetGender,
-                   doc='The gender of this user.')
+                    doc='The gender of this user.')
 
   def __ne__(self, other):
     return not self.__eq__(other)
@@ -683,9 +683,9 @@ class User(object):
       data['following_count'] = self.following_count
     if self.favourites_count:
       data['favourites_count'] = self.favourites_count
-    if self.is_followed_me:
+    if self.is_followed_me is not None:
       data['is_followed_me'] = self.is_followed_me
-    if self.is_following:
+    if self.is_following is not None:
       data['is_following'] = self.is_following
     if self.score:
       data['score'] = self.score
@@ -787,11 +787,11 @@ class DirectMessage(object):
   created_at = property(GetCreatedAt, SetCreatedAt,
                         doc='The time this direct message was posted.')
 
-  def GetCreatedAtInSeconds(self):
-    return calendar.timegm(rfc822.parsedate(self.created_at))
-  created_at_in_seconds = property(GetCreatedAtInSeconds,
-                                   doc="The time this direct message was "
-                                       "posted, in seconds since the epoch")
+#  def GetCreatedAtInSeconds(self):
+#    return calendar.timegm(rfc822.parsedate(self.created_at))
+#  created_at_in_seconds = property(GetCreatedAtInSeconds,
+#                                   doc="The time this direct message was "
+#                                       "posted, in seconds since the epoch")
 
   def GetSenderId(self):
     return self._sender_id
@@ -830,17 +830,17 @@ class DirectMessage(object):
   
   def GetSender(self):
     return self._sender
-  def SetSender(self, text):
+  def SetSender(self, sender):
     self._sender = sender
   sender = property(GetSender, SetSender,
                     doc='The renjian.User object of sender.')
   
   def GetRecipient(self):
     return self._recipient
-  def SetRecipient(self, text):
+  def SetRecipient(self, recipient):
     self._recipient = recipient
   recipient = property(GetRecipient, SetRecipient,
-                  doc='The renjian.User object of recipient.')
+                       doc='The renjian.User object of recipient.')
 
   def __ne__(self, other):
     return not self.__eq__(other)

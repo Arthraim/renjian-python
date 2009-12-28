@@ -15,17 +15,17 @@ import renjian
 
 class StatusTest(unittest.TestCase):
 
-  SAMPLE_JSON = '''{"id":349507,"created_at":"2009-12-24 14:33:01 +0800","relative_date":"1小时前","text":"@kinki[:O]","source":"网站","truncated":false,"in_reply_to_status_id":349505,"in_reply_to_user_id":1479,"in_reply_to_screen_name":"kinki","favorited":false,"original_url":"http://arthraim.cn/","status_type":"LINK","link_title":"Arthraim.cn - programing","link_desc":"my fucking blog","thunmbnail":"http://avatar.renjian.com/1049/120x120_3.jpg","level":1,"root_screen_name":"Arthraim","root_status_id":349381,"all_zt_num":3,"stick":true,"favoriters":["asfman","pippo"],"user":{"id":1049,"name":"Arthur","screen_name":"Arthraim","description":"一个做自己喜欢做的事情的小小程序员……","profile_image_url":"http://avatar.renjian.com/1049/120x120_6.jpg","url":"http://arthraim.cn/","protected":false,"created_at":"2009-08-08 02:22:53 +0800","followers_count":217,"following_count":125,"favourites_count":103,"is_followed_me":0,"is_following":0,"score":5343,"gender":1}}'''
+  SAMPLE_JSON = '''{"all_zt_num": 3, "created_at": "2009-12-24 14:33:01 +0800", "favorited": false, "favoriters": ["asfman", "pippo"], "id": 349507, "in_reply_to_screen_name": "kinki", "in_reply_to_status_id": 349505, "in_reply_to_user_id": 1479, "level": 1, "link_desc": "my fucking blog", "link_title": "Arthraim.cn - programing", "original_url": "http://arthraim.cn/", "relative_date": "1\u5c0f\u65f6\u524d", "root_screen_name": "Arthraim", "root_status_id": 349381, "source": "\u7f51\u7ad9", "status_type": "LINK", "stick": true, "text": "@kinki [:O]", "thumbnail": "http://avatar.renjian.com/1049/120x120_3.jpg", "truncated": false, "user": {"created_at": "2009-08-08 02:22:53 +0800", "description": "\u4e00\u4e2a\u505a\u81ea\u5df1\u559c\u6b22\u505a\u7684\u4e8b\u60c5\u7684\u5c0f\u5c0f\u7a0b\u5e8f\u5458\u2026\u2026", "favourites_count": 103, "followers_count": 217, "following_count": 125, "gender": 1, "id": 1049, "is_followed_me": 0, "is_following": 0, "name": "Arthur", "profile_image_url": "http://avatar.renjian.com/1049/120x120_6.jpg", "protected": false, "score": 5343, "screen_name": "Arthraim", "url": "http://arthraim.cn/"}}'''
   #SAMPLE_JSON = '''{"created_at": "Fri Jan 26 23:17:14 +0000 2007", "id": 4391023, "text": "A l\u00e9gp\u00e1rn\u00e1s haj\u00f3m tele van angoln\u00e1kkal.", "user": {"description": "Canvas. JC Penny. Three ninety-eight.", "id": 718443, "location": "Okinawa, Japan", "name": "Kesuke Miyagi", "profile_image_url": "http://twitter.com/system/user/profile_image/718443/normal/kesuke.png", "screen_name": "kesuke", "url": "http://twitter.com/kesuke"}}'''
 
   def _GetSampleUser(self):
     return renjian.User(id=1049,
                         name='Arthur',
                         screen_name='Arthraim',
-                        description=u'一个做自己喜欢做的事情的小小程序员……',
+                        description='一个做自己喜欢做的事情的小小程序员……',
                         profile_image_url='http://avatar.renjian.com/1049/120x120_6.jpg',
                         url='http://arthraim.cn/',
-                        protected='false',
+                        protected=False,
                         created_at='2009-08-08 02:22:53 +0800',
                         followers_count=217,
                         following_count=125,
@@ -41,11 +41,11 @@ class StatusTest(unittest.TestCase):
                           relative_date='1小时前',
                           text='@kinki [:O]',
                           source='网站',
-                          truncated='false',
+                          truncated=False,
                           in_reply_to_status_id=349505,
                           in_reply_to_user_id=1479,
                           in_reply_to_screen_name='kinki',
-                          favorited='false',
+                          favorited=False,
                           original_url='http://arthraim.cn/',
                           status_type='LINK',
                           link_title='Arthraim.cn - programing',
@@ -55,7 +55,7 @@ class StatusTest(unittest.TestCase):
                           root_screen_name='Arthraim',
                           root_status_id=349381,
                           all_zt_num=3,
-                          stick='true',
+                          stick=True,
                           favoriters=['asfman','pippo'],
                           user=self._GetSampleUser())
 
@@ -66,11 +66,11 @@ class StatusTest(unittest.TestCase):
                           relative_date='1小时前',
                           text='@kinki [:O]',
                           source='网站',
-                          truncated='false',
+                          truncated=False,
                           in_reply_to_status_id=349505,
                           in_reply_to_user_id=1479,
                           in_reply_to_screen_name='kinki',
-                          favorited='false',
+                          favorited=False,
                           original_url='http://arthraim.cn/',
                           status_type='LINK',
                           link_title='Arthraim.cn - programing',
@@ -80,7 +80,7 @@ class StatusTest(unittest.TestCase):
                           root_screen_name='Arthraim',
                           root_status_id=349381,
                           all_zt_num=3,
-                          stick='true',
+                          stick=True,
                           favoriters=['asfman','pippo'],
                           user=self._GetSampleUser())
 
@@ -223,8 +223,6 @@ class StatusTest(unittest.TestCase):
 
   def testAsJsonString(self):
     '''Test the renjian.Status AsJsonString method'''
-    print(self._GetSampleStatus().AsJsonString())
-    print(StatusTest.SAMPLE_JSON)
     self.assertEqual(StatusTest.SAMPLE_JSON, self._GetSampleStatus().AsJsonString())
     # sequence is not same, dictionary will sort the properties
 
@@ -234,7 +232,7 @@ class StatusTest(unittest.TestCase):
     data = status.AsDict()
     self.assertEqual(349507, data['id'])
     self.assertEqual('2009-12-24 14:33:01 +0800', data['created_at'])
-    self.assertEqual(u'@kinki [:O]', data['text'])
+    self.assertEqual('@kinki [:O]', data['text'])
     self.assertEqual(1049, data['user']['id'])
 
   def testEq(self):
@@ -245,11 +243,11 @@ class StatusTest(unittest.TestCase):
     status.relative_date='1小时前'
     status.text='@kinki [:O]'
     status.source='网站'
-    status.truncated='false'
+    status.truncated=False
     status.in_reply_to_status_id=349505
     status.in_reply_to_user_id=1479
     status.in_reply_to_screen_name='kinki'
-    status.favorited='false'
+    status.favorited=False
     status.original_url='http://arthraim.cn/'
     status.status_type='LINK'
     status.link_title='Arthraim.cn - programing'
@@ -259,91 +257,145 @@ class StatusTest(unittest.TestCase):
     status.root_screen_name='Arthraim'
     status.root_status_id=349381
     status.all_zt_num=3
-    status.stick='true'
+    status.stick=True
     status.favoriters=['asfman','pippo']
     status.user=self._GetSampleUser()
-    self.assertEqual(status, self._GetSampleStatus())
-
+    sample = self._GetSampleStatus()
+    self.assertEqual(sample.id, status.id)
+    self.assertEqual(sample.created_at, status.created_at)
+    self.assertEqual(sample.relative_date, status.relative_date)
+    self.assertEqual(sample.text, status.text)
+    self.assertEqual(sample.source, status.source)
+    self.assertEqual(sample.truncated, status.truncated)
+    self.assertEqual(sample.in_reply_to_status_id, status.in_reply_to_status_id)
+    self.assertEqual(sample.in_reply_to_user_id, status.in_reply_to_user_id)
+    self.assertEqual(sample.in_reply_to_screen_name, status.in_reply_to_screen_name)
+    self.assertEqual(sample.favorited, status.favorited)
+    self.assertEqual(sample.original_url, status.original_url)
+    self.assertEqual(sample.status_type, status.status_type)
+    self.assertEqual(sample.link_title, status.link_title)
+    self.assertEqual(sample.link_desc, status.link_desc)
+    self.assertEqual(sample.thumbnail, status.thumbnail)
+    self.assertEqual(sample.level, status.level)
+    self.assertEqual(sample.root_screen_name, status.root_screen_name)
+    self.assertEqual(sample.root_status_id, status.root_status_id)
+    self.assertEqual(sample.all_zt_num, status.all_zt_num)
+    self.assertEqual(sample.stick, status.stick)
+    self.assertEqual(sample.favoriters, status.favoriters)
+    self.assertEqual(sample.user.id, status.user.id)
+    
   def testNewFromJsonDict(self):
-    '''Test the renjian.Status NewFromJsonDict method'''
+    '''Test the renjian.User NewFromJsonDict method'''
     data = simplejson.loads(StatusTest.SAMPLE_JSON)
     status = renjian.Status.NewFromJsonDict(data)
-    mine = self._GetSampleStatus()
-    self.assertEqual(self._GetSampleStatus(), status)
-"""
+    self.assertEqual(self._GetSampleStatus(), status)  
+
 class UserTest(unittest.TestCase):
 
-  SAMPLE_JSON = '''{"description": "Indeterminate things", "id": 673483, "location": "San Francisco, CA", "name": "DeWitt", "profile_image_url": "http://renjian.com/system/user/profile_image/673483/normal/me.jpg", "screen_name": "dewitt", "status": {"created_at": "Fri Jan 26 17:28:19 +0000 2007", "id": 4212713, "text": "\\"Select all\\" and archive your Gmail inbox.  The page loads so much faster!"}, "url": "http://unto.net/"}'''
-
-  def _GetSampleStatus(self):
-    return renjian.Status(created_at='Fri Jan 26 17:28:19 +0000 2007',
-                          id=4212713,
-                          text='"Select all" and archive your Gmail inbox. '
-                               ' The page loads so much faster!')
+  SAMPLE_JSON = '''{"created_at": "2009-08-08 02:22:53 +0800", "description": "\u4e00\u4e2a\u505a\u81ea\u5df1\u559c\u6b22\u505a\u7684\u4e8b\u60c5\u7684\u5c0f\u5c0f\u7a0b\u5e8f\u5458\u2026\u2026", "favourites_count": 103, "followers_count": 217, "following_count": 125, "gender": 1, "id": 1049, "is_followed_me": 0, "is_following": 0, "name": "Arthur", "profile_image_url": "http://avatar.renjian.com/1049/120x120_6.jpg", "protected": false, "score": 5343, "screen_name": "Arthraim", "url": "http://arthraim.cn/"}'''
 
   def _GetSampleUser(self):
-    return renjian.User(id=673483,
-                        name='DeWitt',
-                        screen_name='dewitt',
-                        description=u'Indeterminate things',
-                        location='San Francisco, CA',
-                        url='http://unto.net/',
-                        profile_image_url='http://renjian.com/system/user/prof'
-                                          'ile_image/673483/normal/me.jpg',
-                        status=self._GetSampleStatus())
-
-
+    return renjian.User(id=1049,
+                        name='Arthur',
+                        screen_name='Arthraim',
+                        description='一个做自己喜欢做的事情的小小程序员……',
+                        profile_image_url='http://avatar.renjian.com/1049/120x120_6.jpg',
+                        url='http://arthraim.cn/',
+                        protected=False,
+                        created_at='2009-08-08 02:22:53 +0800',
+                        followers_count=217,
+                        following_count=125,
+                        favourites_count=103,
+                        is_followed_me=0,
+                        is_following=0,
+                        score=5343,
+                        gender=1)
 
   def testInit(self):
     '''Test the renjian.User constructor'''
-    user = renjian.User(id=673483,
-                        name='DeWitt',
-                        screen_name='dewitt',
-                        description=u'Indeterminate things',
-                        url='http://renjian.com/dewitt',
-                        profile_image_url='http://renjian.com/system/user/prof'
-                                          'ile_image/673483/normal/me.jpg',
-                        status=self._GetSampleStatus())
+    user = renjian.User(id=1049,
+                        name='Arthur',
+                        screen_name='Arthraim',
+                        description='一个做自己喜欢做的事情的小小程序员……',
+                        profile_image_url='http://avatar.renjian.com/1049/120x120_6.jpg',
+                        url='http://arthraim.cn/',
+                        protected=False,
+                        created_at='2009-08-08 02:22:53 +0800',
+                        followers_count=217,
+                        following_count=125,
+                        favourites_count=103,
+                        is_followed_me=0,
+                        is_following=0,
+                        score=5343,
+                        gender=1)
 
   def testGettersAndSetters(self):
     '''Test all of the renjian.User getters and setters'''
     user = renjian.User()
-    user.SetId(673483)
-    self.assertEqual(673483, user.GetId())
-    user.SetName('DeWitt')
-    self.assertEqual('DeWitt', user.GetName())
-    user.SetScreenName('dewitt')
-    self.assertEqual('dewitt', user.GetScreenName())
-    user.SetDescription('Indeterminate things')
-    self.assertEqual('Indeterminate things', user.GetDescription())
-    user.SetLocation('San Francisco, CA')
-    self.assertEqual('San Francisco, CA', user.GetLocation())
-    user.SetProfileImageUrl('http://renjian.com/system/user/profile_im'
-                            'age/673483/normal/me.jpg')
-    self.assertEqual('http://renjian.com/system/user/profile_image/673'
-                     '483/normal/me.jpg', user.GetProfileImageUrl())
-    user.SetStatus(self._GetSampleStatus())
-    self.assertEqual(4212713, user.GetStatus().id)
+    user.SetId(1049)
+    self.assertEqual(1049, user.GetId())
+    user.SetName('Arthur')
+    self.assertEqual('Arthur', user.GetName())
+    user.SetScreenName('Arthraim')
+    self.assertEqual('Arthraim', user.GetScreenName())
+    user.SetDescription('一个做自己喜欢做的事情的小小程序员……')
+    self.assertEqual('一个做自己喜欢做的事情的小小程序员……', user.GetDescription())
+    user.SetProfileImageUrl('http://avatar.renjian.com/1049/120x120_6.jpg')
+    self.assertEqual('http://avatar.renjian.com/1049/120x120_6.jpg', user.GetProfileImageUrl())
+    user.SetUrl('http://arthraim.cn/')
+    self.assertEqual('http://arthraim.cn/', user.GetUrl())
+    user.SetProtected('false')
+    self.assertEqual('false', user.GetProtected())
+    user.SetCreatedAt('2009-08-08 02:22:53 +0800')
+    self.assertEqual('2009-08-08 02:22:53 +0800', user.GetCreatedAt())
+    user.SetFollowersCount(217)
+    self.assertEqual(217, user.GetFollowersCount())
+    user.SetFollowingCount(125)
+    self.assertEqual(125, user.GetFollowingCount())
+    user.SetFavouritesCount(103)
+    self.assertEqual(103, user.GetFavouritesCount())
+    user.SetIsFollowedMe(0)
+    self.assertEqual(0, user.GetIsFollowedMe())
+    user.SetIsFollowing(0)
+    self.assertEqual(0, user.GetIsFollowing())
+    user.SetScore(5343)
+    self.assertEqual(5343, user.GetScore())
+    user.SetGender(1)
+    self.assertEqual(1, user.GetGender())
 
   def testProperties(self):
     '''Test all of the renjian.User properties'''
     user = renjian.User()
-    user.id = 673483
-    self.assertEqual(673483, user.id)
-    user.name = 'DeWitt'
-    self.assertEqual('DeWitt', user.name)
-    user.screen_name = 'dewitt'
-    self.assertEqual('dewitt', user.screen_name)
-    user.description = 'Indeterminate things'
-    self.assertEqual('Indeterminate things', user.description)
-    user.location = 'San Francisco, CA'
-    self.assertEqual('San Francisco, CA', user.location)
-    user.profile_image_url = 'http://renjian.com/system/user/profile_i' \
-                             'mage/673483/normal/me.jpg'
-    self.assertEqual('http://renjian.com/system/user/profile_image/6734'
-                     '83/normal/me.jpg', user.profile_image_url)
-    self.status = self._GetSampleStatus()
-    self.assertEqual(4212713, self.status.id)
+    user.id = 1049
+    self.assertEqual(1049, user.id)
+    user.name = 'Arthur'
+    self.assertEqual('Arthur', user.name)
+    user.screenname =  'Arthraim'
+    self.assertEqual('Arthraim', user.screenname)
+    user.description = '一个做自己喜欢做的事情的小小程序员……'
+    self.assertEqual('一个做自己喜欢做的事情的小小程序员……', user.description)
+    user.profile_image_url = 'http://avatar.renjian.com/1049/120x120_6.jpg'
+    self.assertEqual('http://avatar.renjian.com/1049/120x120_6.jpg', user.profile_image_url)
+    user.url = 'http://arthraim.cn/'
+    self.assertEqual('http://arthraim.cn/', user.url)
+    user.protected = 'false'
+    self.assertEqual('false', user.protected)
+    user.created_at = '2009-08-08 02:22:53 +0800'
+    self.assertEqual('2009-08-08 02:22:53 +0800', user.created_at)
+    user.followers_count = 217
+    self.assertEqual(217, user.followers_count)
+    user.following_count = 125
+    self.assertEqual(125, user.following_count)
+    user.favourites_count = 103
+    self.assertEqual(103, user.favourites_count)
+    user.is_followed_me = 0
+    self.assertEqual(0, user.is_followed_me)
+    user.is_following = 0
+    self.assertEqual(0, user.is_followed_me)
+    user.score = 5343
+    self.assertEqual(5343, user.score)
+    user.gender = 1 
+    self.assertEqual(1, user.gender)
 
   def testAsJsonString(self):
     '''Test the renjian.User AsJsonString method'''
@@ -354,29 +406,41 @@ class UserTest(unittest.TestCase):
     '''Test the renjian.User AsDict method'''
     user = self._GetSampleUser()
     data = user.AsDict()
-    self.assertEqual(673483, data['id'])
-    self.assertEqual('DeWitt', data['name'])
-    self.assertEqual('dewitt', data['screen_name'])
-    self.assertEqual('Indeterminate things', data['description'])
-    self.assertEqual('San Francisco, CA', data['location'])
-    self.assertEqual('http://renjian.com/system/user/profile_image/6734'
-                     '83/normal/me.jpg', data['profile_image_url'])
-    self.assertEqual('http://unto.net/', data['url'])
-    self.assertEqual(4212713, data['status']['id'])
+    self.assertEqual(1049, data['id'])
+    self.assertEqual('Arthur', data['name'])
+    self.assertEqual('Arthraim', data['screen_name'])
+    self.assertEqual('一个做自己喜欢做的事情的小小程序员……', data['description'])
+    self.assertEqual('http://avatar.renjian.com/1049/120x120_6.jpg', data['profile_image_url'])
+    self.assertEqual('http://arthraim.cn/', data['url'])
+    self.assertEqual(False, data['protected'])
+    self.assertEqual('2009-08-08 02:22:53 +0800', data['created_at'])
+    self.assertEqual(217, data['followers_count'])
+    self.assertEqual(125, data['following_count'])
+    self.assertEqual(103, data['favourites_count'])
+    self.assertEqual(0, data['is_followed_me'])
+    self.assertEqual(0, data['is_following'])
+    self.assertEqual(5343, data['score'])
+    self.assertEqual(1, data['gender'])
+    
 
   def testEq(self):
     '''Test the renjian.User __eq__ method'''
     user = renjian.User()
-    user.id = 673483
-    user.name = 'DeWitt'
-    user.screen_name = 'dewitt'
-    user.description = 'Indeterminate things'
-    user.location = 'San Francisco, CA'
-    user.profile_image_url = 'http://renjian.com/system/user/profile_image/67' \
-                             '3483/normal/me.jpg'
-    user.url = 'http://unto.net/'
-    user.status = self._GetSampleStatus()
-    self.assertEqual(user, self._GetSampleUser())
+    user.id=1049,
+    user.name='Arthur',
+    user.screen_name='Arthraim',
+    user.description='一个做自己喜欢做的事情的小小程序员……',
+    user.profile_image_url='http://avatar.renjian.com/1049/120x120_6.jpg',
+    user.url='http://arthraim.cn/',
+    user.protected=False,
+    user.created_at='2009-08-08 02:22:53 +0800',
+    user.followers_count=217,
+    user.following_count=125,
+    user.favourites_count=103,
+    user.is_followed_me=0,
+    user.is_following=0,
+    user.score=5343,
+    user.gender=1
 
   def testNewFromJsonDict(self):
     '''Test the renjian.User NewFromJsonDict method'''
@@ -384,6 +448,149 @@ class UserTest(unittest.TestCase):
     user = renjian.User.NewFromJsonDict(data)
     self.assertEqual(self._GetSampleUser(), user)
 
+class DirectMessageTest(unittest.TestCase):
+
+  #SAMPLE_JSON = '''{"id": 61159,"sender_id": 97,"recipient_id": 1049,"created_at": "2009-12-07 15:29:13 +0800","sender_screen_name": "rensea","recipient_screen_name": "Arthraim","text": "您顶的帖子四格已被删除","sender": {"id": 97,"name": "人间团队","screen_name": "renjian","description": "我们是人间团队！","profile_image_url": "http://avatar.renjian.com/97/120x120_1.jpg","url": "","protected": false,"created_at": "2009-07-01 17:46:32 +0800","followers_count": 4776,"following_count": 0,"favourites_count": 17,"is_followed_me": 0,"is_following": 1,"score": 9874,"gender": 0},"recipient": {"id": 1049,"name": "Arthur","screen_name": "Arthraim","description": "一个做自己喜欢做的事情的小小程序员……","profile_image_url": "http://avatar.renjian.com/1049/120x120_7.jpg","url": "http://arthraim.cn/","protected": false,"created_at": "2009-08-08 02:22:53 +0800","followers_count": 228,"following_count": 129,"favourites_count": 106,"is_followed_me": 0,"is_following": 0,"score": 5628,"gender": 1}}'''
+  SAMPLE_JSON = '''{"created_at": "2009-08-08 02:22:53 +0800", "id": 61159, "recipient": {"created_at": "2009-08-08 02:22:53 +0800", "description": "\\u4e00\\u4e2a\\u505a\\u81ea\\u5df1\\u559c\\u6b22\\u505a\\u7684\\u4e8b\\u60c5\\u7684\\u5c0f\\u5c0f\\u7a0b\\u5e8f\\u5458\\u2026\\u2026", "favourites_count": 103, "followers_count": 217, "following_count": 125, "gender": 1, "id": 1049, "is_followed_me": 0, "is_following": 0, "name": "Arthur", "profile_image_url": "http://avatar.renjian.com/1049/120x120_6.jpg", "protected": false, "score": 5343, "screen_name": "Arthraim", "url": "http://arthraim.cn/"}, "recipient_id": 1049, "recipient_screen_name": "Arthraim", "sender": {"created_at": "2009-07-01 17:46:32 +0800", "description": "\\u6211\\u4eec\\u662f\\u4eba\\u95f4\\u56e2\\u961f\\uff01", "favourites_count": 17, "followers_count": 4775, "id": 97, "is_followed_me": 0, "is_following": 1, "name": "\\u4eba\\u95f4\\u56e2\\u961f", "profile_image_url": "http://avatar.renjian.com/97/120x120_1.jpg", "protected": false, "score": 9874, "screen_name": "renjian", "url": "http://renjian.com/"}, "sender_id": 97, "sender_screen_name": "rensea", "text": "\\u60a8\\u9876\\u7684\\u5e16\\u5b50\\u56db\\u683c\\u5df2\\u88ab\\u5220\\u9664"}'''
+
+  def _GetSampleDirectMessage(self):
+    return renjian.DirectMessage(id=61159,
+                                 created_at='2009-08-08 02:22:53 +0800',
+                                 sender_id=97,
+                                 sender_screen_name='rensea',
+                                 recipient_id=1049,
+                                 recipient_screen_name='Arthraim',
+                                 text='您顶的帖子四格已被删除',
+                                 sender=self._GetSampleSender(),
+                                 recipient=self._GetSampleRecipient())
+    
+  def _GetSampleSender(self):
+    return renjian.User(id=97,
+                        name='人间团队',
+                        screen_name='renjian',
+                        description='我们是人间团队！',
+                        profile_image_url='http://avatar.renjian.com/97/120x120_1.jpg',
+                        url='http://renjian.com/',
+                        protected=False,
+                        created_at='2009-07-01 17:46:32 +0800',
+                        followers_count=4775,
+                        following_count=0,
+                        favourites_count=17,
+                        is_followed_me=0,
+                        is_following=1,
+                        score=9874,
+                        gender=0)  
+  
+  def _GetSampleRecipient(self):
+    return renjian.User(id=1049,
+                        name='Arthur',
+                        screen_name='Arthraim',
+                        description='一个做自己喜欢做的事情的小小程序员……',
+                        profile_image_url='http://avatar.renjian.com/1049/120x120_6.jpg',
+                        url='http://arthraim.cn/',
+                        protected=False,
+                        created_at='2009-08-08 02:22:53 +0800',
+                        followers_count=217,
+                        following_count=125,
+                        favourites_count=103,
+                        is_followed_me=0,
+                        is_following=0,
+                        score=5343,
+                        gender=1)  
+
+  def testInit(self):
+    '''Test the renjian.DirectMessage constructor'''
+    user = renjian.DirectMessage(id=61159,
+                                 created_at='2009-08-08 02:22:53 +0800',
+                                 sender_id=97,
+                                 sender_screen_name='rensea',
+                                 recipient_id=1049,
+                                 recipient_screen_name='Arthraim',
+                                 text='您顶的帖子四格已被删除',
+                                 sender=self._GetSampleSender(),
+                                 recipient=self._GetSampleRecipient())
+    
+  def testGettersAndSetters(self):
+    '''Test all of the renjian.DirectMessage getters and setters'''
+    directMessage = renjian.DirectMessage()
+    directMessage.SetId(61159)
+    self.assertEqual(61159, directMessage.GetId())
+    directMessage.SetCreatedAt('2009-08-08 02:22:53 +0800')
+    self.assertEqual('2009-08-08 02:22:53 +0800', directMessage.GetCreatedAt())
+    directMessage.SetSenderId(97)
+    self.assertEqual(97, directMessage.GetSenderId())
+    directMessage.SetSenderScreenName('rensea')
+    self.assertEqual('rensea', directMessage.GetSenderScreenName())
+    directMessage.SetRecipientId(1049)
+    self.assertEqual(1049, directMessage.GetRecipientId())
+    directMessage.SetRecipientScreenName('Arthraim')
+    self.assertEqual('Arthraim', directMessage.GetRecipientScreenName())
+    directMessage.SetText('您顶的帖子四格已被删除')
+    self.assertEqual('您顶的帖子四格已被删除', directMessage.GetText())
+    directMessage.SetSender(self._GetSampleSender())
+    self.assertEqual(self._GetSampleSender(), directMessage.GetSender())
+    directMessage.SetRecipient(self._GetSampleRecipient())
+    self.assertEqual(self._GetSampleRecipient(), directMessage.GetRecipient())
+    
+  def testProperties(self):
+    '''Test all of the renjian.DirectMessage properties'''
+    directMessage = renjian.DirectMessage()
+    directMessage.id = 61159
+    self.assertEqual(61159, directMessage.id)
+    directMessage.created_at = '2009-08-08 02:22:53 +0800'
+    self.assertEqual('2009-08-08 02:22:53 +0800', directMessage.created_at)
+    directMessage.sender_id  = 97
+    self.assertEqual(97, directMessage.sender_id)
+    directMessage.sender_screen_name = 'rensea'
+    self.assertEqual('rensea', directMessage.sender_screen_name)
+    directMessage.recipient_id = 1049
+    self.assertEqual(1049, directMessage.recipient_id)
+    directMessage.recipient_screen_name = 'Arthraim'
+    self.assertEqual('Arthraim', directMessage.recipient_screen_name)
+    directMessage.text = '您顶的帖子四格已被删除'
+    self.assertEqual('您顶的帖子四格已被删除', directMessage.text)
+    directMessage.sender = self._GetSampleSender()
+    self.assertEqual(self._GetSampleSender(), directMessage.sender)
+    directMessage.recipient = self._GetSampleRecipient()
+    self.assertEqual(self._GetSampleRecipient(), directMessage.recipient)
+
+  def testAsJsonString(self):
+    '''Test the renjian.DirectMessage AsJsonString method'''
+    self.assertEqual(DirectMessageTest.SAMPLE_JSON,
+                     self._GetSampleDirectMessage().AsJsonString())
+
+  def testAsDict(self):
+    '''Test the renjian.DirectMessage AsDict method'''
+    user = self._GetSampleDirectMessage()
+    data = user.AsDict()
+    self.assertEqual(61159, data['id'])
+    self.assertEqual('2009-08-08 02:22:53 +0800', data['created_at'])
+    self.assertEqual(97, data['sender_id'])
+    self.assertEqual('rensea', data['sender_screen_name'])
+    self.assertEqual(1049, data['recipient_id'])
+    self.assertEqual('Arthraim', data['recipient_screen_name'])
+    self.assertEqual('您顶的帖子四格已被删除', data['text'])
+    self.assertEqual(self._GetSampleSender().id, data['sender']['id'])
+    self.assertEqual(self._GetSampleRecipient().id, data['recipient']['id'])
+    
+  def testEq(self):
+    '''Test the renjian.DirectMessage __eq__ method'''
+    directMessage = renjian.DirectMessage()
+    directMessage.id=61159
+    directMessage.created_at='2009-08-08 02:22:53 +0800'
+    directMessage.sender_id=97
+    directMessage.sender_screen_name='rensea'
+    directMessage.recipient_id=1049
+    directMessage.recipient_screen_name='Arthraim'
+    directMessage.text='您顶的帖子四格已被删除'
+    directMessage.sender=self._GetSampleSender()
+    directMessage.recipient=self._GetSampleRecipient()
+
+  def testNewFromJsonDict(self):
+    '''Test the renjian.DirectMessage NewFromJsonDict method'''
+    data = simplejson.loads(DirectMessageTest.SAMPLE_JSON)
+    directMessage = renjian.DirectMessage.NewFromJsonDict(data)
+    self.assertEqual(self._GetSampleDirectMessage().id, directMessage.id)
 
 class FileCacheTest(unittest.TestCase):
 
@@ -425,6 +632,7 @@ class FileCacheTest(unittest.TestCase):
                  'Cached time differs from clock time by more than 1 second.')
     cache.Remove("foo")
 
+"""
 class ApiTest(unittest.TestCase):
 
   def setUp(self):
