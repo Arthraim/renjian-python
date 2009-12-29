@@ -404,7 +404,7 @@ class Status(object):
       data['root_screen_name'] = self.root_screen_name
     if self.root_status_id:
       data['root_status_id'] = self.root_status_id
-    if self.all_zt_num:
+    if self.all_zt_num is not None:
       data['all_zt_num'] = self.all_zt_num
     if self.stick is not None:
       data['stick'] = self.stick
@@ -677,19 +677,19 @@ class User(object):
       data['protected'] = self.protected
     if self.created_at:
       data['created_at'] = self.created_at
-    if self.followers_count:
+    if self.followers_count is not None:
       data['followers_count'] = self.followers_count
-    if self.following_count:
+    if self.following_count is not None:
       data['following_count'] = self.following_count
-    if self.favourites_count:
+    if self.favourites_count is not None:
       data['favourites_count'] = self.favourites_count
     if self.is_followed_me is not None:
       data['is_followed_me'] = self.is_followed_me
     if self.is_following is not None:
       data['is_following'] = self.is_following
-    if self.score:
+    if self.score is not None:
       data['score'] = self.score
-    if self.gender:
+    if self.gender is not None:
       data['gender'] = self.gender
       
     return data
@@ -979,7 +979,7 @@ class Conversation(object):
 
   def GetLastStatusId(self):
     return self._last_status_id
-  def SetLastStatusId(self, created_at):
+  def SetLastStatusId(self, last_status_id):
     self._last_status_id = last_status_id
   last_status_id = property(GetLastStatusId, SetLastStatusId,
                             doc='The last status id of the conversation.')
@@ -993,17 +993,17 @@ class Conversation(object):
   
   def GetUnreadCount(self):
     return self._unread_count
-  def SetUnreadCount(self, text):
+  def SetUnreadCount(self, unread_count):
     self._unread_count = unread_count
   unread_count = property(GetUnreadCount, SetUnreadCount,
-                    doc='Unread count of statuses in Conversation.')
+                          doc='Unread count of statuses in Conversation.')
   
   def GetOwner(self):
     return self._owner
   def SetOwner(self, owner):
     self._owner = owner
   owner = property(GetOwner, SetOwner,
-                       doc='A User object represent the ownder of the Conversation')
+                   doc='A User object represent the ownder of the Conversation')
 
   def __ne__(self, other):
     return not self.__eq__(other)
@@ -1052,7 +1052,7 @@ class Conversation(object):
       data['last_status_id'] = self.last_status_id
     if self.text:
       data['text'] = self.text
-    if self.unread_count:
+    if self.unread_count is not None:
       data['unread_count'] = self.unread_count
     if self.owner:
       data['owner'] = self.owner.AsDict()

@@ -451,7 +451,7 @@ class UserTest(unittest.TestCase):
 class DirectMessageTest(unittest.TestCase):
 
   #SAMPLE_JSON = '''{"id": 61159,"sender_id": 97,"recipient_id": 1049,"created_at": "2009-12-07 15:29:13 +0800","sender_screen_name": "rensea","recipient_screen_name": "Arthraim","text": "您顶的帖子四格已被删除","sender": {"id": 97,"name": "人间团队","screen_name": "renjian","description": "我们是人间团队！","profile_image_url": "http://avatar.renjian.com/97/120x120_1.jpg","url": "","protected": false,"created_at": "2009-07-01 17:46:32 +0800","followers_count": 4776,"following_count": 0,"favourites_count": 17,"is_followed_me": 0,"is_following": 1,"score": 9874,"gender": 0},"recipient": {"id": 1049,"name": "Arthur","screen_name": "Arthraim","description": "一个做自己喜欢做的事情的小小程序员……","profile_image_url": "http://avatar.renjian.com/1049/120x120_7.jpg","url": "http://arthraim.cn/","protected": false,"created_at": "2009-08-08 02:22:53 +0800","followers_count": 228,"following_count": 129,"favourites_count": 106,"is_followed_me": 0,"is_following": 0,"score": 5628,"gender": 1}}'''
-  SAMPLE_JSON = '''{"created_at": "2009-08-08 02:22:53 +0800", "id": 61159, "recipient": {"created_at": "2009-08-08 02:22:53 +0800", "description": "\\u4e00\\u4e2a\\u505a\\u81ea\\u5df1\\u559c\\u6b22\\u505a\\u7684\\u4e8b\\u60c5\\u7684\\u5c0f\\u5c0f\\u7a0b\\u5e8f\\u5458\\u2026\\u2026", "favourites_count": 103, "followers_count": 217, "following_count": 125, "gender": 1, "id": 1049, "is_followed_me": 0, "is_following": 0, "name": "Arthur", "profile_image_url": "http://avatar.renjian.com/1049/120x120_6.jpg", "protected": false, "score": 5343, "screen_name": "Arthraim", "url": "http://arthraim.cn/"}, "recipient_id": 1049, "recipient_screen_name": "Arthraim", "sender": {"created_at": "2009-07-01 17:46:32 +0800", "description": "\\u6211\\u4eec\\u662f\\u4eba\\u95f4\\u56e2\\u961f\\uff01", "favourites_count": 17, "followers_count": 4775, "id": 97, "is_followed_me": 0, "is_following": 1, "name": "\\u4eba\\u95f4\\u56e2\\u961f", "profile_image_url": "http://avatar.renjian.com/97/120x120_1.jpg", "protected": false, "score": 9874, "screen_name": "renjian", "url": "http://renjian.com/"}, "sender_id": 97, "sender_screen_name": "rensea", "text": "\\u60a8\\u9876\\u7684\\u5e16\\u5b50\\u56db\\u683c\\u5df2\\u88ab\\u5220\\u9664"}'''
+  SAMPLE_JSON = '''{"created_at": "2009-08-08 02:22:53 +0800", "id": 61159, "recipient": {"created_at": "2009-08-08 02:22:53 +0800", "description": "\\u4e00\\u4e2a\\u505a\\u81ea\\u5df1\\u559c\\u6b22\\u505a\\u7684\\u4e8b\\u60c5\\u7684\\u5c0f\\u5c0f\\u7a0b\\u5e8f\\u5458\\u2026\\u2026", "favourites_count": 103, "followers_count": 217, "following_count": 125, "gender": 1, "id": 1049, "is_followed_me": 0, "is_following": 0, "name": "Arthur", "profile_image_url": "http://avatar.renjian.com/1049/120x120_6.jpg", "protected": false, "score": 5343, "screen_name": "Arthraim", "url": "http://arthraim.cn/"}, "recipient_id": 1049, "recipient_screen_name": "Arthraim", "sender": {"created_at": "2009-07-01 17:46:32 +0800", "description": "\\u6211\\u4eec\\u662f\\u4eba\\u95f4\\u56e2\\u961f\\uff01", "favourites_count": 17, "followers_count": 4775, "following_count": 0, "gender": 0, "id": 97, "is_followed_me": 0, "is_following": 1, "name": "\\u4eba\\u95f4\\u56e2\\u961f", "profile_image_url": "http://avatar.renjian.com/97/120x120_1.jpg", "protected": false, "score": 9874, "screen_name": "renjian", "url": "http://renjian.com/"}, "sender_id": 97, "sender_screen_name": "rensea", "text": "\\u60a8\\u9876\\u7684\\u5e16\\u5b50\\u56db\\u683c\\u5df2\\u88ab\\u5220\\u9664"}'''
 
   def _GetSampleDirectMessage(self):
     return renjian.DirectMessage(id=61159,
@@ -561,8 +561,8 @@ class DirectMessageTest(unittest.TestCase):
 
   def testAsDict(self):
     '''Test the renjian.DirectMessage AsDict method'''
-    user = self._GetSampleDirectMessage()
-    data = user.AsDict()
+    directMessage = self._GetSampleDirectMessage()
+    data = directMessage.AsDict()
     self.assertEqual(61159, data['id'])
     self.assertEqual('2009-08-08 02:22:53 +0800', data['created_at'])
     self.assertEqual(97, data['sender_id'])
@@ -590,7 +590,102 @@ class DirectMessageTest(unittest.TestCase):
     '''Test the renjian.DirectMessage NewFromJsonDict method'''
     data = simplejson.loads(DirectMessageTest.SAMPLE_JSON)
     directMessage = renjian.DirectMessage.NewFromJsonDict(data)
-    self.assertEqual(self._GetSampleDirectMessage().id, directMessage.id)
+    self.assertEqual(self._GetSampleDirectMessage(), directMessage)
+    
+class ConversationTest(unittest.TestCase):
+
+  SAMPLE_JSON = '''{"id": 363332, "last_status_id": 364076, "owner": {"created_at": "2009-08-08 02:22:53 +0800", "description": "\\u4e00\\u4e2a\\u505a\\u81ea\\u5df1\\u559c\\u6b22\\u505a\\u7684\\u4e8b\\u60c5\\u7684\\u5c0f\\u5c0f\\u7a0b\\u5e8f\\u5458\\u2026\\u2026", "favourites_count": 107, "followers_count": 241, "following_count": 133, "gender": 1, "id": 1049, "is_followed_me": 0, "is_following": 0, "name": "Arthur", "profile_image_url": "http://avatar.renjian.com/1049/120x120_6.jpg", "protected": false, "score": 5671, "screen_name": "Arthraim", "url": "http://arthraim.cn/"}, "text": "\\u539f\\u6765\\u4ee5\\u524d\\u7684\\u4eba\\u95f4\\u7f51\\u662f\\u8fd9\\u6837\\u7684~", "unread_count": 0}'''
+
+  def _GetSampleConversation(self):
+    return renjian.Conversation(id=363332,
+                                last_status_id=364076,
+                                text='原来以前的人间网是这样的~',
+                                unread_count=0,
+                                owner=self._GetSampleOwner())
+    
+  def _GetSampleOwner(self):
+    return renjian.User(id=1049,
+                        name='Arthur',
+                        screen_name='Arthraim',
+                        description='一个做自己喜欢做的事情的小小程序员……',
+                        profile_image_url='http://avatar.renjian.com/1049/120x120_6.jpg',
+                        url='http://arthraim.cn/',
+                        protected=False,
+                        created_at='2009-08-08 02:22:53 +0800',
+                        followers_count=241,
+                        following_count=133,
+                        favourites_count=107,
+                        is_followed_me=0,
+                        is_following=0,
+                        score=5671,
+                        gender=1)  
+
+  def testInit(self):
+    '''Test the renjian.Conversation constructor'''
+    user = renjian.Conversation(id=363332,
+                                last_status_id=364076,
+                                text='原来以前的人间网是这样的~',
+                                unread_count=0,
+                                owner=self._GetSampleOwner())
+
+  def testGettersAndSetters(self):
+    '''Test all of the renjian.Conversation getters and setters'''
+    conversation = renjian.Conversation()
+    conversation.SetId(363332)
+    self.assertEqual(363332, conversation.GetId())
+    conversation.SetLastStatusId(364076)
+    self.assertEqual(364076, conversation.GetLastStatusId())
+    conversation.SetText('原来以前的人间网是这样的~')
+    self.assertEqual('原来以前的人间网是这样的~', conversation.GetText())
+    conversation.SetUnreadCount(0)
+    self.assertEqual(0, conversation.GetUnreadCount())
+    conversation.SetOwner(self._GetSampleOwner())
+    self.assertEqual(self._GetSampleOwner(), conversation.GetOwner())
+    
+  def testProperties(self):
+    '''Test all of the renjian.Conversation properties'''
+    conversation = renjian.Conversation()
+    conversation.id = 363332
+    self.assertEqual(363332, conversation.id)
+    conversation.last_status_id = 364076
+    self.assertEqual(364076, conversation.last_status_id)
+    conversation.text = '原来以前的人间网是这样的~'
+    self.assertEqual('原来以前的人间网是这样的~', conversation.text)
+    conversation.unread_count = 0
+    self.assertEqual(0, conversation.unread_count)
+    conversation.owner = self._GetSampleOwner()
+    self.assertEqual(self._GetSampleOwner(), conversation.owner)
+
+  def testAsJsonString(self):
+    '''Test the renjian.Conversation AsJsonString method'''
+    self.assertEqual(ConversationTest.SAMPLE_JSON,
+                     self._GetSampleConversation().AsJsonString())
+
+  def testAsDict(self):
+    '''Test the renjian.Conversation AsDict method'''
+    conversation = self._GetSampleConversation()
+    data = conversation.AsDict()
+    self.assertEqual(363332, data['id'])
+    self.assertEqual(364076, data['last_status_id'])
+    self.assertEqual('原来以前的人间网是这样的~', data['text'])
+    self.assertEqual(0, data['unread_count'])
+    self.assertEqual(self._GetSampleOwner().id, data['owner']['id'])
+    
+  def testEq(self):
+    '''Test the renjian.Conversation __eq__ method'''
+    directMessage = renjian.Conversation()
+    directMessage.id=363332
+    directMessage.last_status_id=364076
+    directMessage.sender_id=97
+    directMessage.text='原来以前的人间网是这样的~'
+    directMessage.unread_count=0
+    directMessage.owner=self._GetSampleOwner()
+
+  def testNewFromJsonDict(self):
+    '''Test the renjian.Conversation NewFromJsonDict method'''
+    data = simplejson.loads(ConversationTest.SAMPLE_JSON)
+    conversation = renjian.Conversation.NewFromJsonDict(data)
+    self.assertEqual(self._GetSampleConversation(), conversation)
 
 class FileCacheTest(unittest.TestCase):
 
