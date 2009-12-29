@@ -1735,29 +1735,46 @@ class Api(object):
     json = self._FetchUrl(url, post_data=parameters)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
-    return (data.is_follow == "true")
-# TODO: need test
+    return data.is_follow # true or false
 
-  def GetFollowingIds(self, user):
-    # TODO: COMPLETE IT
+  def GetFollowingIds(self, id):
+    # TODO: maybe need a constructor
     pass
 
   def GetFollowerIds(self, user):
-    # TODO: COMPLETE IT
+    # TODO: maybe need a constructor
     pass
+
+  def GetFavorites(self, page):
+    '''Get the authenticating user's favorite status.
+    Returns the favorite status when successful.
+
+    The renjian instance must be authenticated.
+
+    Args:
+      The page of all the status.
+    Returns:
+      All the renjian.Status instance representing the user favorited.
+    '''
+    url = 'http://api.renjian.com/favorites/list.json'
+    parameters = {'page': page}
+    json = self._FetchUrl(url, post_data=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return [Status.NewFromJsonDict(x) for x in data]
 
   def CreateFavorite(self, status):
     '''Favorites the status specified in the status parameter as the authenticating user.
     Returns the favorite status when successful.
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Args:
-      The twitter.Status instance to mark as a favorite.
+      The renjian.Status instance to mark as a favorite.
     Returns:
-      A twitter.Status instance representing the newly-marked favorite.
+      A renjian.Status instance representing the newly-marked favorite.
     '''
-    url = 'http://twitter.com/favorites/create/%s.json' % status.id
+    url = 'http://api.renjian.com/favorites/create/%s.json' % status.id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
@@ -1767,14 +1784,14 @@ class Api(object):
     '''Un-favorites the status specified in the ID parameter as the authenticating user.
     Returns the un-favorited status in the requested format when successful.
 
-    The twitter.Api instance must be authenticated.
+    The renjian.Api instance must be authenticated.
 
     Args:
-      The twitter.Status to unmark as a favorite.
+      The renjian.Status to unmark as a favorite.
     Returns:
-      A twitter.Status instance representing the newly-unmarked favorite.
+      A renjian.Status instance representing the newly-unmarked favorite.
     '''
-    url = 'http://twitter.com/favorites/destroy/%s.json' % status.id
+    url = 'http://api.renjian.com/favorites/destroy/%s.json' % status.id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
