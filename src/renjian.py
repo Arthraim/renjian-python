@@ -1085,12 +1085,12 @@ class Api(object):
 
   Example usage:
 
-    To create an instance of the twitter.Api class, with no authentication:
+    To create an instance of the renjian.Api class, with no authentication:
 
       >>> import renjian
       >>> api = renjian.Api()
 
-    To fetch the most recently posted public twitter status messages:
+    To fetch the most recently posted public renjian status messages:
 
       >>> statuses = api.GetPublicTimeline()
       >>> print [s.user.name for s in statuses]
@@ -1141,7 +1141,7 @@ class Api(object):
 
   DEFAULT_CACHE_TIMEOUT = 60 # cache for 1 minute
 
-  _API_REALM = 'Twitter API'
+  _API_REALM = 'Renjian API'
 
   def __init__(self,
                username=None,
@@ -1151,8 +1151,8 @@ class Api(object):
     '''Instantiate a new renjian.Api object.
 
     Args:
-      username: The username of the twitter account.  [optional]
-      password: The password for the twitter account. [optional]
+      username: The username of the renjian account.  [optional]
+      password: The password for the renjian account. [optional]
       input_encoding: The encoding used to encode input strings. [optional]
       request_header: A dictionary of additional HTTP request headers. [optional]
     '''
@@ -1356,7 +1356,7 @@ class Api(object):
         ....
 
     Returns:
-      A sequence of twitter.Status instances, one for each reply to the user.
+      A sequence of renjian.Status instances, one for each reply to the user.
     '''
     url = 'http://api.renjian.com/statuses/mentions.json'
     if not self._username:
@@ -1839,7 +1839,7 @@ class Api(object):
     self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
 
-  def BlockUser(self, id=None):
+  def BlockUser(self, id):
     '''Block some user by authenticating user.
 
     The renjian instance must be authenticated.
@@ -1860,7 +1860,7 @@ class Api(object):
     self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
 
-  def UnblockUser(self, id=None):
+  def UnblockUser(self, id):
     '''Unblock some user by authenticating user.
 
     The renjian instance must be authenticated.
@@ -1881,26 +1881,144 @@ class Api(object):
     self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
 
-  def GetUserByEmail(self, email):
-    '''Returns a single user by email address.
+  def GetMyConversations(self,
+                           since_id=None,
+                           count=None,
+                           page=None):
+    '''Fetch the sequnce of renjian.Conversation for all the conversation 
+       the authencating user inside.
 
     Args:
-      email: The email of the user to retrieve.
+      since_id:
+        Return only the conversations with an ID greater than the specified ID.
+      count: 
+        Specifies the number of statuses to retrieve. May not be
+        greater than 200. [Optional]
+      page:
+        ....
+
     Returns:
-      A twitter.User instance representing that user
+      An sequence of renjian.Conversation instances, one for each message
     '''
-    url = 'http://twitter.com/users/show.json?email=%s' % email
-    json = self._FetchUrl(url)
+    parameters = {}
+    if since_id:
+      parameters['since_id'] = since_id
+    if count:
+      parameters['count'] = count
+    if page:
+      parameters['page'] = page
+    url = 'http://api.renjian.com/conversations/my_conversations.json'
+    json = self._FetchUrl(url,  parameters=parameters)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
-    return User.NewFromJsonDict(data)
+    return [Conversation.NewFromJsonDict(x) for x in data]
+
+  def GetConversationByStatusId(self, 
+                                   id,
+                                   since_id=None,
+                                   count=None,
+                                   page=None,
+                                   show_all=None):
+    '''Fetch the sequnce of renjian.Status message for the conversation
+       which has the specified status in.
+
+    Args:
+      id:
+        Returns the conversation which has this status in.
+      since_id:
+        Return only the statuses with an ID greater than the specified ID.  [Optional]
+      count: 
+        Specifies the number of statuses to retrieve. May not be
+        greater than 200. [Optional]
+      page:
+        ....
+      show_all:
+        If show_all is true, server will return all the status in this conversation.  
+
+    Returns:
+      An sequence of renjian.Status instances, one for each message
+    '''
+    parameters = {}
+    if id:
+      parameters['id'] = id
+    if since_id:
+      parameters['since_id'] = since_id
+    if count:
+      parameters['count'] = count
+    if page:
+      parameters['page'] = page
+    if show_all:
+      parameters['show_all'] = show_all
+    url = 'http://api.renjian.com/conversations/show_by_status.json'
+    json = self._FetchUrl(url,  parameters=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return [Status.NewFromJsonDict(x) for x in data]
+
+  def GetConversationByConversationId(self, 
+                                          id,
+                                          since_id=None,
+                                          count=None,
+                                          page=None,
+                                          show_all=None):
+    '''Fetch the sequnce of renjian.Status message for the specified conversation.
+
+    note: conversation_id = the id of the conversation's root status
+
+    Args:
+      id:
+        Returns only public statuses with an ID greater than (that is,
+        more recent than) the specified ID. [Optional]
+      since_id:
+        Return only the statuses with an ID greater than the specified ID.  [Optional]
+      count: 
+        Specifies the number of statuses to retrieve. May not be
+        greater than 200. [Optional]
+      page:
+        ....
+      show_all:
+        If show_all is true, server will return all the status in this conversation.  
+
+    Returns:
+      An sequence of renjian.Status instances, one for each message
+    '''
+    parameters = {}
+    if id:
+      parameters['id'] = id
+    if since_id:
+      parameters['since_id'] = since_id
+    if count:
+      parameters['count'] = count
+    if page:
+      parameters['page'] = page
+    if show_all:
+      parameters['show_all'] = show_all
+    url = 'http://api.renjian.com/conversations/statuses.json'
+    json = self._FetchUrl(url,  parameters=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return [Status.NewFromJsonDict(x) for x in data]
+
+#  def GetUserByEmail(self, email):
+#    '''Returns a single user by email address.
+#
+#    Args:
+#      email: The email of the user to retrieve.
+#    Returns:
+#      A renjian.User instance representing that user
+#    '''
+#    url = 'http://renjian.com/users/show.json?email=%s' % email
+#    json = self._FetchUrl(url)
+#    data = simplejson.loads(json)
+#    self._CheckForRenjianError(data)
+#    return User.NewFromJsonDict(data)
 
   def SetCredentials(self, username, password):
     '''Set the username and password for this instance
 
     Args:
-      username: The twitter username.
-      password: The twitter password.
+      username: The renjian username.
+      password: The renjian password.
     '''
     self._username = username
     self._password = password
@@ -1915,7 +2033,7 @@ class Api(object):
     '''Override the default cache.  Set to None to prevent caching.
 
     Args:
-      cache: an instance that supports the same API as the  twitter._FileCache
+      cache: an instance that supports the same API as the  renjian._FileCache
     '''
     self._cache = cache
 
@@ -1943,30 +2061,30 @@ class Api(object):
     '''
     self._request_headers['User-Agent'] = user_agent
 
-  def SetXTwitterHeaders(self, client, url, version):
-    '''Set the X-Twitter HTTP headers that will be sent to the server.
-
-    Args:
-      client:
-         The client name as a string.  Will be sent to the server as
-         the 'X-Twitter-Client' header.
-      url:
-         The URL of the meta.xml as a string.  Will be sent to the server
-         as the 'X-Twitter-Client-URL' header.
-      version:
-         The client version as a string.  Will be sent to the server
-         as the 'X-Twitter-Client-Version' header.
-    '''
-    self._request_headers['X-Twitter-Client'] = client
-    self._request_headers['X-Twitter-Client-URL'] = url
-    self._request_headers['X-Twitter-Client-Version'] = version
+#  def SetXRenjianHeaders(self, client, url, version):
+#    '''Set the X-Renjian HTTP headers that will be sent to the server.
+#
+#    Args:
+#      client:
+#         The client name as a string.  Will be sent to the server as
+#         the 'X-Renjian-Client' header.
+#      url:
+#         The URL of the meta.xml as a string.  Will be sent to the server
+#         as the 'X-Renjian-Client-URL' header.
+#      version:
+#         The client version as a string.  Will be sent to the server
+#         as the 'X-Renjian-Client-Version' header.
+#    '''
+#    self._request_headers['X-Renjian-Client'] = client
+#    self._request_headers['X-Renjian-Client-URL'] = url
+#    self._request_headers['X-Renjian-Client-Version'] = version
 
   def SetSource(self, source):
-    '''Suggest the "from source" value to be displayed on the Twitter web site.
+    '''Suggest the "from source" value to be displayed on the Renjian web site.
 
     The value of the 'source' parameter must be first recognized by
-    the Twitter server.  New source values are authorized on a case by
-    case basis by the Twitter development team.
+    the Renjian server.  New source values are authorized on a case by
+    case basis by the Renjian development team.
 
     Args:
       source:
@@ -2006,7 +2124,7 @@ class Api(object):
       self._request_headers = {}
 
   def _InitializeUserAgent(self):
-    user_agent = 'Python-urllib/%s (python-twitter/%s)' % \
+    user_agent = 'Python-urllib/%s (renjian-python/%s)' % \
                  (self._urllib.__version__, __version__)
     self.SetUserAgent(user_agent)
 
@@ -2076,14 +2194,14 @@ class Api(object):
       return urllib.urlencode(dict([(k, self._Encode(v)) for k, v in post_data.items()]))
 
   def _CheckForRenjianError(self, data):
-    """Raises a TwitterError if twitter returns an error message.
+    """Raises a RenjianError if renjian returns an error message.
 
     Args:
-      data: A python dict created from the Twitter json response
+      data: A python dict created from the Renjian json response
     Raises:
-      TwitterError wrapping the twitter error message if one exists.
+      RenjianError wrapping the renjian error message if one exists.
     """
-    # Twitter errors are relatively unlikely, so it is faster
+    # Renjian errors are relatively unlikely, so it is faster
     # to check first, rather than try and catch the exception
     if 'error' in data:
       raise RenjianError(data['error'])
