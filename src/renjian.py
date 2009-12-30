@@ -1191,6 +1191,8 @@ class Api(object):
     parameters = {}
     if since_id:
       parameters['since_id'] = since_id
+    if max_id:
+      parameters['max_id'] = max_id
     if count:
       parameters['count'] = count
     if page:
@@ -1327,7 +1329,7 @@ class Api(object):
         long(id)
     except:
       raise RenjianError("id must be an long integer")
-    url = 'http://api.renjian.com/statuses/%s.json' % id
+    url = 'http://api.renjian.com/statuses/show/%s.json' % id
     json = self._FetchUrl(url)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
@@ -1518,9 +1520,9 @@ class Api(object):
     if not self._username:
       raise RenjianError("renjian.Api instance must be authenticated")
     if user:
-      url = 'http://api.renjian.com/statuses/friends/%s.json' % user 
+      url = 'http://api.renjian.com/statuses/followings/%s.json' % user 
     else:
-      url = 'http://api.renjian.com/statuses/friends.json'
+      url = 'http://api.renjian.com/statuses/followings.json'
     json = self._FetchUrl(url)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
@@ -1592,7 +1594,7 @@ class Api(object):
       raise RenjianError("The renjian.Api instance must be authenticated.")
     parameters = {}
     if count:
-      parameters['count'] = since
+      parameters['count'] = count
     if since_id:
       parameters['since_id'] = since_id
     if page:
@@ -1625,7 +1627,7 @@ class Api(object):
       raise RenjianError("The renjian.Api instance must be authenticated.")
     parameters = {}
     if count:
-      parameters['count'] = since
+      parameters['count'] = count
     if since_id:
       parameters['since_id'] = since_id
     if page:
@@ -1650,9 +1652,9 @@ class Api(object):
     if not self._username:
       raise RenjianError("The renjian.Api instance must be authenticated.")
     url = 'http://api.renjian.com/direct_messages/new.json'
-    data = {'text': text, 
-            'user': user}
-    json = self._FetchUrl(url, post_data=data)
+    parameters = {'text': text, 
+                  'user': user}
+    json = self._FetchUrl(url, post_data=parameters)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
     return DirectMessage.NewFromJsonDict(data)
@@ -1691,10 +1693,10 @@ class Api(object):
     if not self._username:
       raise RenjianError("The renjian.Api instance must be authenticated.")
     url = 'http://api.renjian.com/friendships/create.json'
-    parameters = {}
+    data = {}
     if user:
-      parameters['user'] = user
-    json = self._FetchUrl(url, post_data=parameters)
+      data['user'] = user
+    json = self._FetchUrl(url, post_data=data)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
     return User.NewFromJsonDict(data)
@@ -1735,15 +1737,37 @@ class Api(object):
     json = self._FetchUrl(url, post_data=parameters)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
-    return data.is_follow # true or false
+    return data['is_follow']
 
   def GetFollowingIds(self, id):
-    # TODO: maybe need a constructor
-    pass
+    '''Get users' ids of the specified user following
+    
+    Args:
+      the user you want to get
+    Returns:
+      A array of ids.  
+    '''  
+    url = 'http://api.renjian.com/followings/ids.json'
+    parameters = {'id':id}
+    json = self._FetchUrl(url, parameters=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return data
 
-  def GetFollowerIds(self, user):
-    # TODO: maybe need a constructor
-    pass
+  def GetFollowerIds(self, id):
+    '''Get followers' ids of the specified user
+    
+    Args:
+      the user you want to get
+    Returns:
+      A array of ids.  
+    '''  
+    url = 'http://api.renjian.com/followers/ids.json'
+    parameters = {'id':id}
+    json = self._FetchUrl(url, parameters=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return data
 
   def GetFavorites(self, page):
     '''Get the authenticating user's favorite status.

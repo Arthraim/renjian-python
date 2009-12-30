@@ -727,7 +727,6 @@ class FileCacheTest(unittest.TestCase):
                  'Cached time differs from clock time by more than 1 second.')
     cache.Remove("foo")
 
-"""
 class ApiTest(unittest.TestCase):
 
   def setUp(self):
@@ -739,12 +738,12 @@ class ApiTest(unittest.TestCase):
 
   def testrenjianError(self):
     '''Test that renjian responses containing an error message are wrapped.'''
-    self._AddHandler('http://renjian.com/statuses/public_timeline.json',
+    self._AddHandler('http://api.renjian.com/statuses/public_timeline.json',
                      curry(self._OpenTestData, 'public_timeline_error.json'))
     # Manually try/catch so we can check the exception's value
     try:
       statuses = self._api.GetPublicTimeline()
-    except renjian.renjianError, error:
+    except renjian.RenjianError, error:
       # If the error message matches, the test passes
       self.assertEqual('test error', error.message)
     else:
@@ -752,133 +751,179 @@ class ApiTest(unittest.TestCase):
 
   def testGetPublicTimeline(self):
     '''Test the renjian.Api GetPublicTimeline method'''
-    self._AddHandler('http://renjian.com/statuses/public_timeline.json?since_id=12345',
+    self._AddHandler('http://api.renjian.com/statuses/public_timeline.json?count=5&max_id=367987&page=1&since_id=300000',
                      curry(self._OpenTestData, 'public_timeline.json'))
-    statuses = self._api.GetPublicTimeline(since_id=12345)
+    statuses = self._api.GetPublicTimeline(page=1, since_id=300000, max_id=367987, count=5)
     # This is rather arbitrary, but spot checking is better than nothing
-    self.assertEqual(20, len(statuses))
-    self.assertEqual(89497702, statuses[0].id)
-
-  def testGetUserTimeline(self):
-    '''Test the renjian.Api GetUserTimeline method'''
-    self._AddHandler('http://renjian.com/statuses/user_timeline/kesuke.json?count=1&since=Tue%2C+27+Mar+2007+22%3A55%3A48+GMT',
-                     curry(self._OpenTestData, 'user_timeline-kesuke.json'))
-    statuses = self._api.GetUserTimeline('kesuke', count=1, since='Tue, 27 Mar 2007 22:55:48 GMT')
-    # This is rather arbitrary, but spot checking is better than nothing
-    self.assertEqual(89512102, statuses[0].id)
-    self.assertEqual(718443, statuses[0].user.id)
+    self.assertEqual(5, len(statuses))
+    self.assertEqual(367986, statuses[0].id)
 
   def testGetFriendsTimeline(self):
     '''Test the renjian.Api GetFriendsTimeline method'''
-    self._AddHandler('http://renjian.com/statuses/friends_timeline/kesuke.json',
-                     curry(self._OpenTestData, 'friends_timeline-kesuke.json'))
-    statuses = self._api.GetFriendsTimeline('kesuke')
+    self._AddHandler('http://api.renjian.com/statuses/friends_timeline/arthraim.json?count=5&max_id=368084&page=1&since_id=300000',
+                     curry(self._OpenTestData, 'friends_timeline-arthraim.json'))
+    statuses = self._api.GetFriendsTimeline(user='arthraim', page=1, since_id=300000, max_id=368084, count=5)
     # This is rather arbitrary, but spot checking is better than nothing
-    self.assertEqual(20, len(statuses))
-    self.assertEqual(718443, statuses[0].user.id)
+    self.assertEqual(5, len(statuses))
+    self.assertEqual(1049, statuses[0].user.id)
+
+  def testGetUserTimeline(self):
+    '''Test the renjian.Api GetUserTimeline method'''
+    self._AddHandler('http://api.renjian.com/statuses/user_timeline/arthraim.json?count=5&max_id=367987&page=1&since_id=300000',
+                     curry(self._OpenTestData, 'user_timeline-arthraim.json'))
+    statuses = self._api.GetUserTimeline(user='arthraim', page=1, since_id=300000, max_id=367987, count=5)
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(367937, statuses[0].id)
+    self.assertEqual(1049, statuses[0].user.id)
 
   def testGetStatus(self):
     '''Test the renjian.Api GetStatus method'''
-    self._AddHandler('http://renjian.com/statuses/show/89512102.json',
-                     curry(self._OpenTestData, 'show-89512102.json'))
-    status = self._api.GetStatus(89512102)
-    self.assertEqual(89512102, status.id)
-    self.assertEqual(718443, status.user.id)
+    self._AddHandler('http://api.renjian.com/statuses/show/367462.json',
+                     curry(self._OpenTestData, 'show-367462.json'))
+    status = self._api.GetStatus(367462)
+    self.assertEqual(367462, status.id)
+    self.assertEqual(1049, status.user.id)
+
+  def testGetMentions(self):
+    '''Test the renjian.Api GetMentions method'''
+    self._AddHandler('http://api.renjian.com/statuses/mentions.json?count=5&max_id=367795&page=2&since_id=350000',
+                     curry(self._OpenTestData, 'mentions.json'))
+    statuses = self._api.GetMentions(page=2, since_id=350000, max_id=367795, count=5)
+    self.assertEqual(367454, statuses[0].id)
 
   def testDestroyStatus(self):
     '''Test the renjian.Api DestroyStatus method'''
-    self._AddHandler('http://renjian.com/statuses/destroy/103208352.json',
+    self._AddHandler('http://api.renjian.com/statuses/destroy/367462.json',
                      curry(self._OpenTestData, 'status-destroy.json'))
-    status = self._api.DestroyStatus(103208352)
-    self.assertEqual(103208352, status.id)
+    status = self._api.DestroyStatus(367462)
+    self.assertEqual(367462, status.id)
 
-  def testPostUpdate(self):
-    '''Test the renjian.Api PostUpdate method'''
-    self._AddHandler('http://renjian.com/statuses/update.json',
-                     curry(self._OpenTestData, 'update.json'))
-    status = self._api.PostUpdate(u'asdfasdf')
+  def testPostText(self):
+    '''Test the renjian.Api PostText method'''
+    self._AddHandler('http://api.renjian.com/statuses/update.json',
+                     curry(self._OpenTestData, 'post-text.json'))
+    status = self._api.PostText(text=u'Arthraim在测试代码', in_reply_to_status_id=350000)
     # This is rather arbitrary, but spot checking is better than nothing
-    self.assertEqual(u'asdf', status.text)
+    self.assertEqual(u'Arthraim在测试代码', status.text)
+    self.assertEqual(350000, status.in_reply_to_status_id)
+    
+  def testPostLink(self):
+    '''Test the renjian.Api PostLink method'''
+    self._AddHandler('http://api.renjian.com/statuses/update.json',
+                     curry(self._OpenTestData, 'post-link.json'))
+    status = self._api.PostLink(text=u'测试连接', 
+                                original_url=u'http://g.cn/',
+                                in_reply_to_status_id=350000,
+                                link_title=u'Google',
+                                link_desc=u'')
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(u'测试连接', status.text)
+    self.assertEqual(None, status.in_reply_to_status_id)
 
-  def testGetReplies(self):
-    '''Test the renjian.Api GetReplies method'''
-    self._AddHandler('http://renjian.com/statuses/replies.json?page=1',
-                     curry(self._OpenTestData, 'replies.json'))
-    statuses = self._api.GetReplies(page=1)
-    self.assertEqual(36657062, statuses[0].id)
-
-  def testGetFriends(self):
-    '''Test the renjian.Api GetFriends method'''
-    self._AddHandler('http://renjian.com/statuses/friends.json?page=1',
-                     curry(self._OpenTestData, 'friends.json'))
-    users = self._api.GetFriends(page=1)
-    buzz = [u.status for u in users if u.screen_name == 'buzz']
-    self.assertEqual(89543882, buzz[0].id)
+  def testGetFollowings(self):
+    '''Test the renjian.Api GetFollowings method'''
+    self._AddHandler('http://api.renjian.com/statuses/followings/arthraim.json',
+                     curry(self._OpenTestData, 'followings.json'))
+    users = self._api.GetFollowings(user='arthraim')
+    self.assertEqual(5195, users[0].id)
 
   def testGetFollowers(self):
     '''Test the renjian.Api GetFollowers method'''
-    self._AddHandler('http://renjian.com/statuses/followers.json?page=1',
+    self._AddHandler('http://api.renjian.com/statuses/followers/arthraim.json',
                      curry(self._OpenTestData, 'followers.json'))
-    users = self._api.GetFollowers(page=1)
+    users = self._api.GetFollowers(user='arthraim')
     # This is rather arbitrary, but spot checking is better than nothing
-    alexkingorg = [u.status for u in users if u.screen_name == 'alexkingorg']
-    self.assertEqual(89554432, alexkingorg[0].id)
-
-  def testGetFeatured(self):
-    '''Test the renjian.Api GetFeatured method'''
-    self._AddHandler('http://renjian.com/statuses/featured.json',
-                     curry(self._OpenTestData, 'featured.json'))
-    users = self._api.GetFeatured()
-    # This is rather arbitrary, but spot checking is better than nothing
-    stevenwright = [u.status for u in users if u.screen_name == 'stevenwright']
-    self.assertEqual(86991742, stevenwright[0].id)
-
-  def testGetDirectMessages(self):
-    '''Test the renjian.Api GetDirectMessages method'''
-    self._AddHandler('http://renjian.com/direct_messages.json?page=1',
-                     curry(self._OpenTestData, 'direct_messages.json'))
-    statuses = self._api.GetDirectMessages(page=1)
-    self.assertEqual(u'asdfasdfs', statuses[0].text)
-
-  def testPostDirectMessage(self):
-    '''Test the renjian.Api PostDirectMessage method'''
-    self._AddHandler('http://renjian.com/direct_messages/new.json',
-                     curry(self._OpenTestData, 'direct_messages-new.json'))
-    status = self._api.PostDirectMessage('test', u'zxcvzxcv')
-    # This is rather arbitrary, but spot checking is better than nothing
-    self.assertEqual(u'asdfasdfdsf', status.text)
-
-  def testDestroyDirectMessage(self):
-    '''Test the renjian.Api DestroyDirectMessage method'''
-    self._AddHandler('http://renjian.com/direct_messages/destroy/3496342.json',
-                     curry(self._OpenTestData, 'direct_message-destroy.json'))
-    status = self._api.DestroyDirectMessage(3496342)
-    # This is rather arbitrary, but spot checking is better than nothing
-    self.assertEqual(673483, status.sender_id)
-
-  def testCreateFriendship(self):
-    '''Test the renjian.Api CreateFriendship method'''
-    self._AddHandler('http://renjian.com/friendships/create/dewitt.json',
-                     curry(self._OpenTestData, 'friendship-create.json'))
-    user = self._api.CreateFriendship('dewitt')
-    # This is rather arbitrary, but spot checking is better than nothing
-    self.assertEqual(673483, user.id)
-
-  def testDestroyFriendship(self):
-    '''Test the renjian.Api DestroyFriendship method'''
-    self._AddHandler('http://renjian.com/friendships/destroy/dewitt.json',
-                     curry(self._OpenTestData, 'friendship-destroy.json'))
-    user = self._api.DestroyFriendship('dewitt')
-    # This is rather arbitrary, but spot checking is better than nothing
-    self.assertEqual(673483, user.id)
+    self.assertEqual(1364, users[0].id)
+    
+#
+#  def testGetFeatured(self):
+#    '''Test the renjian.Api GetFeatured method'''
+#    self._AddHandler('http://renjian.com/statuses/featured.json',
+#                     curry(self._OpenTestData, 'featured.json'))
+#    users = self._api.GetFeatured()
+#    # This is rather arbitrary, but spot checking is better than nothing
+#    stevenwright = [u.status for u in users if u.screen_name == 'stevenwright']
+#    self.assertEqual(86991742, stevenwright[0].id)
 
   def testGetUser(self):
     '''Test the renjian.Api GetUser method'''
-    self._AddHandler('http://renjian.com/users/show/dewitt.json',
-                     curry(self._OpenTestData, 'show-dewitt.json'))
-    user = self._api.GetUser('dewitt')
-    self.assertEqual('dewitt', user.screen_name)
-    self.assertEqual(89586072, user.status.id)
+    self._AddHandler('http://api.renjian.com/users/show/arthraim.json',
+                     curry(self._OpenTestData, 'show-arthraim.json'))
+    user = self._api.GetUser(user='arthraim')
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(1049, user.id)
+
+  def testGetDirectMessages(self):
+    '''Test the renjian.Api GetDirectMessages method'''
+    self._AddHandler('http://api.renjian.com/direct_messages/receive.json?count=1&page=1&since_id=96765',
+                     curry(self._OpenTestData, 'direct_messages_receive.json'))
+    statuses = self._api.GetDirectMessages(count=1, since_id=96765, page=1)
+    print(statuses[0].text)
+    self.assertEqual(u"您的帖子已被删除:@wangc 同学的博文cnnbboy's Dream » 人间 ＝＝ 围脖？？NO，人间＝＝ 微社区 ", statuses[0].text)
+    
+  def testGetDirectMessagesSent(self):
+    '''Test the renjian.Api GetDirectMessages method'''
+    self._AddHandler('http://api.renjian.com/direct_messages/sent.json?count=1&page=1&since_id=89714',
+                     curry(self._OpenTestData, 'direct_messages_sent.json'))
+    statuses = self._api.GetDirectMessagesSent(count=1, since_id=89714, page=1)
+    print(statuses[0].text)
+    self.assertEqual(u"今天天气不错…………", statuses[0].text)
+    
+
+  def testPostDirectMessage(self):
+    '''Test the renjian.Api PostDirectMessage method'''
+    self._AddHandler('http://api.renjian.com/direct_messages/new.json',
+                     curry(self._OpenTestData, 'direct_messages-new.json'))
+    status = self._api.PostDirectMessage(user='rubyQ', text=u'今天天气不错…………')
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(u'今天天气不错…………', status.text)
+
+  def testDestroyDirectMessage(self):
+    '''Test the renjian.Api DestroyDirectMessage method'''
+    self._AddHandler('http://api.renjian.com/direct_messages/destroy/96766.json',
+                     curry(self._OpenTestData, 'direct_message-destroy.json'))
+    status = self._api.DestroyDirectMessage(96766)
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(1049, status.sender_id)
+
+  def testCreateFriendship(self):
+    '''Test the renjian.Api CreateFriendship method'''
+    self._AddHandler('http://api.renjian.com/friendships/create.json',
+                     curry(self._OpenTestData, 'friendship-create.json'))
+    user = self._api.CreateFriendship(user='renjian')
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(1049, user.id)
+
+  def testDestroyFriendship(self):
+    '''Test the renjian.Api DestroyFriendship method'''
+    self._AddHandler('http://api.renjian.com/friendships/destroy.json',
+                     curry(self._OpenTestData, 'friendship-destroy.json'))
+    user = self._api.DestroyFriendship(user='renjian')
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(1049, user.id)
+    
+  def testExistFriendship(self):
+    '''Test the renjian.Api ExistFriendship method'''
+    self._AddHandler('http://api.renjian.com/friendships/exists.json', 
+                     curry(self._OpenTestData, 'friendship-exist.json'))
+    result = self._api.ExistFriendship(user_a='2', user_b='3')
+    self.assertEqual(True, result)
+    
+  def testGetFollowingIds(self):
+    '''Test the renjian.Api GetFollowingIds method'''
+    self._AddHandler('http://api.renjian.com/followings/ids.json?id=1049', 
+                     curry(self._OpenTestData, 'following_ids.json'))
+    result = self._api.GetFollowingIds(id='1049')
+    self.assertEqual(5195, result[0])
+    
+  def testGetFollowingIds(self):
+    '''Test the renjian.Api GetFollowingIds method'''
+    self._AddHandler('http://api.renjian.com/followers/ids.json?id=1049', 
+                     curry(self._OpenTestData, 'follower_ids.json'))
+    result = self._api.GetFollowerIds(id='1049')
+    self.assertEqual(5728, result[0])
+    
+# TODO: add test code
 
   def _AddHandler(self, url, callback):
     self._urllib.AddHandler(url, callback)
@@ -974,7 +1019,6 @@ def suite():
   suite.addTests(unittest.makeSuite(ApiTest))
   return suite
   
-"""
 
 if __name__ == '__main__':
   unittest.main()
