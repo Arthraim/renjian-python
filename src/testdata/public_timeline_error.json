@@ -1,1 +1,1 @@
-{"error": "test error"}
+{"request":"http://api.renjian.com/statuses/public_timeline.json", "message": "test error"}

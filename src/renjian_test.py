@@ -904,7 +904,7 @@ class ApiTest(unittest.TestCase):
     
   def testExistFriendship(self):
     '''Test the renjian.Api ExistFriendship method'''
-    self._AddHandler('http://api.renjian.com/friendships/exists.json', 
+    self._AddHandler('http://api.renjian.com/friendships/exists.json?user_b=3&user_a=2', 
                      curry(self._OpenTestData, 'friendship-exist.json'))
     result = self._api.ExistFriendship(user_a='2', user_b='3')
     self.assertEqual(True, result)
@@ -923,6 +923,84 @@ class ApiTest(unittest.TestCase):
     result = self._api.GetFollowerIds(id='1049')
     self.assertEqual(5728, result[0])
     
+  def testGetFavorites(self):
+    '''Test the renjian.Api GetPublicTimeline method'''
+    self._AddHandler('http://api.renjian.com/favorites/list.json?page=2',
+                     curry(self._OpenTestData, 'favorites_list.json'))
+    statuses = self._api.GetFavorites(page=2)
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(20, len(statuses))
+    self.assertEqual(350069, statuses[0].id)
+    
+  def testCreateFavorite(self):
+    '''test the renjian.Api CreateFavorite method'''
+    self._AddHandler('http://api.renjian.com/favorites/create/367434.json', 
+                     curry(self._OpenTestData, 'favorite-status.json'))
+    result = self._api.CreateFavorite(status_id='367434')
+    self.assertEqual(367434, result.id)
+    
+  def testDestroyFavorite(self):
+    '''test the renjian.Api CreateFavorite method'''
+    self._AddHandler('http://api.renjian.com/favorites/destroy/367434.json', 
+                     curry(self._OpenTestData, 'favorite-status.json'))
+    result = self._api.DestroyFavorite(status_id='367434')
+    self.assertEqual(367434, result.id)
+    
+  def testUpdateUserProfile(self):
+    '''test the renjian.Api UpdateUserProfile method'''
+    self._AddHandler('http://api.renjian.com/account/update_profile.json', 
+                     curry(self._OpenTestData, 'show-arthraim.json'))
+    user = self._api.UpdateUserProfile(nickname='Arthur',
+                                       username='arthraim', 
+                                       location='China', 
+                                       email='arthraim@gmail.com', 
+                                       url='http://arthraim.cn/',
+                                       description="一个做自己喜欢做的事情的小小程序员……")
+    self.assertEqual(1049, user.id)
+    self.assertEqual('Arthur', user.name)
+    self.assertEqual('Arthraim', user.screen_name)
+    self.assertEqual('一个做自己喜欢做的事情的小小程序员……', user.description)
+    
+  def testBlockUser(self):
+    '''test the renjian.Api BlockUser method'''
+    self._AddHandler('http://api.renjian.com/blocks/create.json', 
+                     curry(self._OpenTestData, 'show-arthraim.json'))
+    user = self._api.BlockUser(id='1049')
+    self.assertEqual(1049, user.id)
+    
+  def testUnblockUser(self):
+    '''test the renjian.Api UnblockUser method'''
+    self._AddHandler('http://api.renjian.com/blocks/destory.json', 
+                     curry(self._OpenTestData, 'show-arthraim.json'))
+    user = self._api.UnblockUser(id='1049')
+    self.assertEqual(1049, user.id)
+    
+  def testGetMyConversations(self):
+    '''test the renjian.Api GetMyConversations method'''
+    self._AddHandler('http://api.renjian.com/conversations/my_conversations.json?count=3&page=1&since_id=150000', 
+                     curry(self._OpenTestData, 'my_conversations.json'))
+    conversations = self._api.GetMyConversations(since_id=150000, count=3, page=1)
+    self.assertEqual(5, len(conversations))
+    self.assertEqual(360447, conversations[0].id)
+    
+  def testGetConversationByStatusId(self):
+    '''Test the renjian.Api GetConversationByStatusId method'''
+    self._AddHandler('http://api.renjian.com/conversations/show_by_status.json?count=5&id=360512&since_id=360512&page=1',
+                     curry(self._OpenTestData, 'conversation-show_by_status.json'))
+    statuses = self._api.GetConversationByStatusId(id='360512', page=1, since_id=360512, count=5, show_all=False)
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(360516, statuses[0].id)
+    self.assertEqual(1049, statuses[0].user.id)
+    
+  def testGetConversationByConversationId(self):
+    '''Test the renjian.Api GetConversationByConversationId method'''
+    self._AddHandler('http://api.renjian.com/conversations/statuses.json?count=5&id=360447&since_id=360512&page=1',
+                     curry(self._OpenTestData, 'conversation-by_conversation_id.json'))
+    statuses = self._api.GetConversationByConversationId(id='360447', page=1, since_id=360512, count=5, show_all=False)
+    # This is rather arbitrary, but spot checking is better than nothing
+    self.assertEqual(360516, statuses[0].id)
+    self.assertEqual(1049, statuses[0].user.id)
+      
 # TODO: add test code
 
   def _AddHandler(self, url, callback):

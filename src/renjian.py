@@ -1734,7 +1734,7 @@ class Api(object):
     url = 'http://api.renjian.com/friendships/exists.json'
     parameters = {'user_a': user_a,
                   'user_b': user_b}
-    json = self._FetchUrl(url, post_data=parameters)
+    json = self._FetchUrl(url, parameters=parameters)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
     return data['is_follow']
@@ -1782,40 +1782,40 @@ class Api(object):
     '''
     url = 'http://api.renjian.com/favorites/list.json'
     parameters = {'page': page}
-    json = self._FetchUrl(url, post_data=parameters)
+    json = self._FetchUrl(url, parameters=parameters)
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
     return [Status.NewFromJsonDict(x) for x in data]
 
-  def CreateFavorite(self, status):
+  def CreateFavorite(self, status_id):
     '''Favorites the status specified in the status parameter as the authenticating user.
     Returns the favorite status when successful.
 
     The renjian.Api instance must be authenticated.
 
     Args:
-      The renjian.Status instance to mark as a favorite.
+      The status to mark as a favorite's id.
     Returns:
       A renjian.Status instance representing the newly-marked favorite.
     '''
-    url = 'http://api.renjian.com/favorites/create/%s.json' % status.id
+    url = 'http://api.renjian.com/favorites/create/%s.json' % status_id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
 
-  def DestroyFavorite(self, status):
+  def DestroyFavorite(self, status_id):
     '''Un-favorites the status specified in the ID parameter as the authenticating user.
     Returns the un-favorited status in the requested format when successful.
 
     The renjian.Api instance must be authenticated.
 
     Args:
-      The renjian.Status to unmark as a favorite.
+      The status to unmark as a favorite's id.
     Returns:
       A renjian.Status instance representing the newly-unmarked favorite.
     '''
-    url = 'http://api.renjian.com/favorites/destroy/%s.json' % status.id
+    url = 'http://api.renjian.com/favorites/destroy/%s.json' % status_id
     json = self._FetchUrl(url, post_data={})
     data = simplejson.loads(json)
     self._CheckForRenjianError(data)
@@ -2227,8 +2227,8 @@ class Api(object):
     """
     # Renjian errors are relatively unlikely, so it is faster
     # to check first, rather than try and catch the exception
-    if 'error' in data:
-      raise RenjianError(data['error'])
+    if 'request' in data:
+      raise RenjianError(data['message'])
 
   def _FetchUrl(self,
                 url,
