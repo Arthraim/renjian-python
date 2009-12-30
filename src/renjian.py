@@ -1797,6 +1797,90 @@ class Api(object):
     self._CheckForRenjianError(data)
     return Status.NewFromJsonDict(data)
 
+  def UpdateUserProfile(self,
+                          nickname=None,
+                          username=None, 
+                          location=None, 
+                          email=None, 
+                          url=None,
+                          description=None):
+    '''Update the authenticating user's profile.
+
+    The renjian instance must be authenticated.
+
+    Args:
+      nickname: the user's new screenname
+      username: the user's new name
+      location: the user's new location
+      email: the user's new email
+      url: the user's url
+      description: the user's description
+    Returns:
+      The renjian.User instance of the authenticating user.
+    '''
+    if not self._username:
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+    url = 'http://api.renjian.com/account/update_profile.json'
+    parameters = {}
+    if nickname:
+      parameters['nickname'] = nickname
+    if username:
+      parameters['username'] = username
+    if location:
+      parameters['location'] = location
+    if email:
+      parameters['email'] = email
+    if url:
+      parameters['url'] = url
+    if description:
+      parameters['description'] = description
+    json = self._FetchUrl(url, post_data=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return User.NewFromJsonDict(data)
+
+  def BlockUser(self, id=None):
+    '''Block some user by authenticating user.
+
+    The renjian instance must be authenticated.
+
+    Args:
+      The id of the user whom will be block.
+    Returns:
+      The renjian.User instance of the authenticating user.
+    '''
+    if not self._username:
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+    url = 'http://api.renjian.com/blocks/create.json'
+    parameters = {}
+    if id:
+      parameters['id'] = id
+    json = self._FetchUrl(url, post_data=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return User.NewFromJsonDict(data)
+
+  def UnblockUser(self, id=None):
+    '''Unblock some user by authenticating user.
+
+    The renjian instance must be authenticated.
+
+    Args:
+      The id of the user whom will be unblock.
+    Returns:
+      The renjian.User instance of the authenticating user.
+    '''
+    if not self._username:
+      raise RenjianError("The renjian.Api instance must be authenticated.")
+    url = 'http://api.renjian.com/blocks/destory.json'
+    parameters = {}
+    if id:
+      parameters['id'] = id
+    json = self._FetchUrl(url, post_data=parameters)
+    data = simplejson.loads(json)
+    self._CheckForRenjianError(data)
+    return User.NewFromJsonDict(data)
+
   def GetUserByEmail(self, email):
     '''Returns a single user by email address.
 
