@@ -1,26 +1,27 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python2.6
+# coding=UTF-8
 
-'''Load the latest update for a Twitter user and leave it in an XHTML fragment'''
+'''Load the latest update for a Renjian user and leave it in an XHTML fragment'''
 
-__author__ = 'dewitt@google.com'
+__author__ = 'arthraim@gmail.com'
 
 import codecs
 import getopt
 import sys
-import twitter
+import renjian
 
 TEMPLATE = """
-<div class="twitter">
-  <span class="twitter-user"><a href="http://twitter.com/%s">Twitter</a>: </span>
-  <span class="twitter-text">%s</span>
-  <span class="twitter-relative-created-at"><a href="http://twitter.com/%s/statuses/%s">Posted %s</a></span>
+<div class="renjian">
+  <span class="renjian-user"><a href="http://renjian.com/%s">Renjian</a>: </span>
+  <span class="renjian-text">%s</span>
+  <span class="renjian-relative-created-at"><a href="http://renjian.com/%s/statuses/%s">Posted %s</a></span>
 </div>
 """
 
 def Usage():
   print 'Usage: %s [options] twitterid' % __file__
   print
-  print '  This script fetches a users latest twitter update and stores'
+  print '  This script fetches a users latest renjian update and stores'
   print '  the result in a file as an XHTML fragment'
   print
   print '  Options:'
@@ -30,9 +31,9 @@ def Usage():
 
 def FetchTwitter(user, output):
   assert user
-  statuses = twitter.Api().GetUserTimeline(user=user, count=1)
+  statuses = renjian.Api().GetUserTimeline(user=user, count=1)
   s = statuses[0]
-  xhtml = TEMPLATE % (s.user.screen_name, s.text, s.user.screen_name, s.id, s.relative_created_at)
+  xhtml = TEMPLATE % (s.user.screen_name, s.text, s.user.screen_name, s.id, s.relative_date)
   if output:
     Save(xhtml, output)
   else:
@@ -40,7 +41,7 @@ def FetchTwitter(user, output):
 
 
 def Save(xhtml, output):
-  out = codecs.open(output, mode='w', encoding='ascii',
+  out = codecs.open(output, mode='w', encoding='UTF-8',
                     errors='xmlcharrefreplace')
   out.write(xhtml)
   out.close()

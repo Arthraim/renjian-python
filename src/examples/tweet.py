@@ -1,31 +1,32 @@
-#!/usr/bin/python2.4
+#!/usr/bin/python2.6
+# coding=UTF-8
 
-'''Post a message to twitter'''
+'''Post a message to renjian'''
 
-__author__ = 'dewitt@google.com'
+__author__ = 'arthraim@gmail.com'
 
 import ConfigParser
 import getopt
 import os
 import sys
-import twitter
+import renjian
 
 
 USAGE = '''Usage: tweet [options] message
 
-  This script posts a message to Twitter.
+  This script posts a message to renjian.
 
   Options:
 
     -h --help : print this help
-    --username : the twitter username [optional]
-    --password : the twitter password [optional]
+    --username : the renjian username [optional]
+    --password : the renjian password [optional]
     --encoding : the character set encoding used in input strings, e.g. "utf-8". [optional]
 
   Documentation:
 
   If the --username or --password command line arguments are present they
-  will be used to authenticate to Twitter.
+  will be used to authenticate to renjian.
 
   If either of the command line flags are not present, the environment
   variables TWEETUSERNAME and TWEETPASSWORD will then be checked for your
@@ -104,9 +105,10 @@ def main():
   password = passwordflag or GetPasswordEnv() or rc.GetPassword()
   if not username or not password:
     PrintUsageAndExit()
-  api = twitter.Api(username=username, password=password, input_encoding=encoding)
+    print("no username or password")
+  api = renjian.Api(username=username, password=password, input_encoding=encoding)
   try:
-    status = api.PostUpdate(message)
+    status = api.PostText(text=message)
   except UnicodeDecodeError:
     print "Your message could not be encoded.  Perhaps it contains non-ASCII characters? "
     print "Try explicitly specifying the encoding with the --encoding flag"
