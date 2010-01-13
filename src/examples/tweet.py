@@ -108,6 +108,7 @@ def main():
     print("no username or password")
   api = renjian.Api(username=username, password=password, input_encoding=encoding)
   try:
+    api.SetSource("renjian-python")
     status = api.PostText(text=message)
   except UnicodeDecodeError:
     print "Your message could not be encoded.  Perhaps it contains non-ASCII characters? "
