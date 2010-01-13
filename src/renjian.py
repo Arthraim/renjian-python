@@ -282,34 +282,6 @@ class Status(object):
                   doc='A renjian.User reprenting the entity posting this '
                       'status message')
 
-  #TODO: need modify
-  '''
-  def GetRelativeCreatedAt(self):
-    fudge = 1.25
-    delta  = long(self.now) - long(self.created_at_in_seconds)
-
-    if delta < (1 * fudge):
-      return 'about a second ago'
-    elif delta < (60 * (1/fudge)):
-      return 'about %d seconds ago' % (delta)
-    elif delta < (60 * fudge):
-      return 'about a minute ago'
-    elif delta < (60 * 60 * (1/fudge)):
-      return 'about %d minutes ago' % (delta / 60)
-    elif delta < (60 * 60 * fudge):
-      return 'about an hour ago'
-    elif delta < (60 * 60 * 24 * (1/fudge)):
-      return 'about %d hours ago' % (delta / (60 * 60))
-    elif delta < (60 * 60 * 24 * fudge):
-      return 'about a day ago'
-    else:
-      return 'about %d days ago' % (delta / (60 * 60 * 24))
-
-  relative_created_at = property(GetRelativeCreatedAt,
-                                 doc='Get a human readable string representing'
-                                     'the posting time')
-  '''
-
   def __ne__(self, other):
     return not self.__eq__(other)
 
