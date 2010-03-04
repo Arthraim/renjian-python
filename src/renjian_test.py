@@ -916,8 +916,8 @@ class ApiTest(unittest.TestCase):
     result = self._api.GetFollowingIds(id='1049')
     self.assertEqual(5195, result[0])
     
-  def testGetFollowingIds(self):
-    '''Test the renjian.Api GetFollowingIds method'''
+  def testGetFollowerIds(self):
+    '''Test the renjian.Api GetFollowerIds method'''
     self._AddHandler('http://api.renjian.com/followers/ids.json?id=1049', 
                      curry(self._OpenTestData, 'follower_ids.json'))
     result = self._api.GetFollowerIds(id='1049')

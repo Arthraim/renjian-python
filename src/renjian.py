@@ -2092,7 +2092,7 @@ class Api(object):
     def _BuildUrl(self, url, path_elements=None, extra_params=None):
         # Break url into consituent parts
         (scheme, netloc, path, params, query, fragment) = urlparse.urlparse(url)
-        
+    
         # Add any additional path elements to the path
         if path_elements:
             # Filter out the path elements that have a value of None
@@ -2100,16 +2100,16 @@ class Api(object):
             if not path.endswith('/'):
                 path += '/'
             path += '/'.join(p)
-        
+    
         # Add any additional query parameters to the query string
         if extra_params and len(extra_params) > 0:
             extra_query = self._EncodeParameters(extra_params)
-        # Add it to the existing query
-        if query:
-            query += '&' + extra_query
-        else:
-            query = extra_query
-        
+            # Add it to the existing query
+            if query:
+                query += '&' + extra_query
+            else:
+                query = extra_query
+    
         # Return the rebuilt URL
         return urlparse.urlunparse((scheme, netloc, path, params, query, fragment))
     
