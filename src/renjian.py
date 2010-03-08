@@ -1,5 +1,5 @@
 #!/usr/bin/python2.6
-# coding=UTF8
+# coding=UTF-8
 
 __author__ = 'Arthur Wang'
 __version__ = '0.1'
