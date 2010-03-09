@@ -1735,7 +1735,7 @@ class Api(object):
         self._CheckForRenjianError(data)
         return data
     
-    def GetFavorites(self, page):
+    def GetFavorites(self, page=None):
         '''Get the authenticating user's favorite status.
         Returns the favorite status when successful.
         
